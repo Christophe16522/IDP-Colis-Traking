@@ -121,7 +121,9 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
                                 isEmail = false;
                                 btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
+                                txtBarcodeValue.setTextColor(-16711936);
                                 txtBarcodeValue.setText(intentData);
+
                             }
                         }
                     });
