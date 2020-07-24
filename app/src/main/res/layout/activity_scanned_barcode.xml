@@ -21,7 +21,7 @@
 
     <TextView
         android:id="@+id/txtBarcodeValue"
-        android:layout_width="191dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="32dp"
@@ -40,5 +40,7 @@
         android:layout_marginBottom="32dp"
         android:text="Track Product"
         app:layout_constraintBottom_toBottomOf="@+id/surfaceView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
 </androidx.constraintlayout.widget.ConstraintLayout>
