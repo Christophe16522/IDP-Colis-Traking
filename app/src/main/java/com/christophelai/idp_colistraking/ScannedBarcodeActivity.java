@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,14 +26,15 @@ import java.io.IOException;
 
 public class ScannedBarcodeActivity extends AppCompatActivity {
 
+    private static final int REQUEST_CAMERA_PERMISSION = 201;
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
-    private BarcodeDetector barcodeDetector;
-    private CameraSource cameraSource;
-    private static final int REQUEST_CAMERA_PERMISSION = 201;
     Button btnAction;
+
     String intentData = "";
     boolean isEmail = false;
+    private BarcodeDetector barcodeDetector;
+    private CameraSource cameraSource;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,17 +47,13 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
         txtBarcodeValue = findViewById(R.id.txtBarcodeValue);
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
-
+        btnAction.setClickable(false);
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (intentData.length() > 0) {
-                    if (isEmail);
-                      //  startActivity(new Intent(ScannedBarcodeActivity.this, EmailActivity.class).putExtra("email_address", intentData));
-                    else {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intentData)));
-                    }
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intentData)));
                 }
             }
         });
@@ -106,24 +104,20 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
+
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
+
                 if (barcodes.size() != 0) {
                     txtBarcodeValue.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (barcodes.valueAt(0).email != null) {
+                            if (barcodes.valueAt(0).url != null) {
                                 txtBarcodeValue.removeCallbacks(null);
-                                intentData = barcodes.valueAt(0).email.address;
-                                txtBarcodeValue.setText(intentData);
-                                isEmail = true;
-                                btnAction.setText("ADD CONTENT TO THE MAIL");
-                            } else {
-                                isEmail = false;
-                                btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
-                                txtBarcodeValue.setTextColor(-16711936);
                                 txtBarcodeValue.setText(intentData);
-
+                                btnAction.setClickable(true);
+                                txtBarcodeValue.setTextColor(-16711936);
+                                btnAction.setText("Proced Traking");
                             }
                         }
                     });
