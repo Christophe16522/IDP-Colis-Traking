@@ -1,30 +1,48 @@
 package com.christophelai.idp_colistraking;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class ScannedBarcodeActivity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ScannedBarcodeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     private static final int REQUEST_CAMERA_PERMISSION = 201;
     SurfaceView surfaceView;
@@ -32,15 +50,32 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
     Button btnAction;
 
     String intentData = "";
-    boolean isEmail = false;
+    String[] users = {"Suresh Dasari", "Trishika Dasari", "Rohini Alavala", "Praveen Kumar", "Madhav Sai"};
+    String url = "http://192.168.100.10/api-delivery/getstatus";
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanned_barcode);
+        Spinner spin = (Spinner) findViewById(R.id.spinner1);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, users);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(adapter);
+        spin.setOnItemSelectedListener(this);
         initViews();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
+        Toast.makeText(getApplicationContext(), "Selected User: " + users[position], Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> arg0) {
+        // TODO - Custom Code
     }
 
     private void initViews() {
@@ -51,12 +86,49 @@ public class ScannedBarcodeActivity extends AppCompatActivity {
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (intentData.length() > 0) {
+                getData();
+               /* if (intentData.length() > 0) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intentData)));
-                }
+                }*/
             }
         });
+    }
+
+    public void getData() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        try {
+
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    txtBarcodeValue.setText("Resposne : " + response.toString());
+                    Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    String message = null;
+                    if (volleyError instanceof NetworkError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ServerError) {
+                        message = "The server could not be found. Please try again after some time!!";
+                    } else if (volleyError instanceof AuthFailureError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ParseError) {
+                        message = "Parsing error! Please try again after some time!!";
+                    } else if (volleyError instanceof NoConnectionError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof TimeoutError) {
+                        message = "Connection TimeOut! Please check your internet connection.";
+                    }
+                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void initialiseDetectorsAndSources() {

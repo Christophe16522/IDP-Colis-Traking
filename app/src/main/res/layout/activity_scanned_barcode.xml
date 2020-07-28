@@ -29,17 +29,36 @@
         android:layout_marginLeft="64dp"
         android:layout_marginEnd="64dp"
         android:layout_marginRight="64dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="112dp"
         android:text="No Barcode Detected"
         android:textColor="@android:color/white"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/btnAction"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="MissingConstraints" />
+
+    <Spinner
+        android:id="@+id/spinner1"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginLeft="65dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="65dp"
+        android:layout_marginRight="65dp"
+        android:layout_marginBottom="32dp"
+        android:background="#2B2B2B"
+        app:layout_constraintBottom_toTopOf="@+id/btnAction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBarcodeValue"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/btnAction"
+        android:background="#FFFFFF"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
