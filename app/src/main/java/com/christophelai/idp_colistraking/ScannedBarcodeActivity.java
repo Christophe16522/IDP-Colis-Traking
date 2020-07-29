@@ -49,22 +49,25 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
     Button btnAction;
-
+    String baseUrlTrackId = "";
+    String statusById = "";
     String intentData = "";
     String[] users = {"Emballage", "Depart Entrepot", "Livraison", "Arriver a la poste", "Terminer"};
     String url = "http://192.168.100.10/api-delivery/getstatus";
+
     String newStatusId = "0";
     String urlTracking = "http://192.168.100.10:8000/trackingdelivery/updatetracking/{idTracking}/{newStatusId}/{currentDate}";
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
-
-
+    ArrayAdapter<String> adapter ;
+    int spinnerPosition;
+    Spinner spin;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanned_barcode);
-        Spinner spin = (Spinner) findViewById(R.id.spinner1);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, users);
+        spin = (Spinner) findViewById(R.id.spinner1);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, users);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(adapter);
         spin.setOnItemSelectedListener(this);
@@ -95,6 +98,50 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
         });
     }
 
+    public void getStatusById(String idDelivery) {
+        String url = "http://192.168.100.10:8000/api-delivery/getStatusById/" + idDelivery;
+        String res;
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        try {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        statusById = response.getString("trackingDesc");
+                        Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //txtBarcodeValue.setText("Resposne : " + response.toString());
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    String message = null;
+                    if (volleyError instanceof NetworkError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ServerError) {
+                        message = "The server could not be found. Please try again after some time!!";
+                    } else if (volleyError instanceof AuthFailureError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ParseError) {
+                        message = "Parsing error! Please try again after some time!!";
+                    } else if (volleyError instanceof NoConnectionError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof TimeoutError) {
+                        message = "Connection TimeOut! Please check your internet connection.";
+                    }
+                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
     public void getidStatus(String status) {
         String url = "http://192.168.100.10:8000/api-delivery/getIdStatus/" + status;
         String res;
@@ -110,7 +157,6 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
                         e.printStackTrace();
                     }
                     //txtBarcodeValue.setText("Resposne : " + response.toString());
-
                 }
             }, new Response.ErrorListener() {
 
@@ -154,8 +200,9 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String todayDate = df.format(c);
-        String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtracking + "/" + newstatus + "/" + todayDate;
 
+        // String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtracking + "/" + newstatus + "/" + todayDate;
+        String url = baseUrlTrackId + newstatus + "/" + todayDate;
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
@@ -273,23 +320,31 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
-
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-
                 if (barcodes.size() != 0) {
                     txtBarcodeValue.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (barcodes.valueAt(0).url != null) {
-                                txtBarcodeValue.removeCallbacks(null);
+                            if (barcodes.valueAt(0).email != null) {
+                                /*txtBarcodeValue.removeCallbacks(null);
+                                intentData = barcodes.valueAt(0).email.address;
+                                txtBarcodeValue.setText(intentData);
+                                btnAction.setText("ADD CONTENT TO THE MAIL");*/
+                            } else {
+                                baseUrlTrackId = barcodes.valueAt(0).displayValue;
+                                String idDeliveri  =baseUrlTrackId.replace("http://192.168.100.10:8000/trackingdelivery/updatetracking/","");
+                                getStatusById(idDeliveri);
+                                //change spiner
+                                spinnerPosition = adapter.getPosition(statusById);
+                                spin.setSelection(spinnerPosition);
+                                //c
+                                btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
                                 txtBarcodeValue.setText(intentData);
-                                btnAction.setClickable(true);
-                                txtBarcodeValue.setTextColor(-16711936);
-                                btnAction.setText("Proced Traking");
                             }
                         }
                     });
+
                 }
             }
         });
