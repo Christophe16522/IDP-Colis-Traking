@@ -34,11 +34,14 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class ScannedBarcodeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -48,9 +51,10 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
     Button btnAction;
 
     String intentData = "";
-    String[] users = {"Suresh Dasari", "Trishika Dasari", "Rohini Alavala", "Praveen Kumar", "Madhav Sai"};
+    String[] users = {"Emballage", "Depart Entrepot", "Livraison", "Arriver a la poste", "Terminer"};
     String url = "http://192.168.100.10/api-delivery/getstatus";
-    String urlTracking = "http://192.168.100.10/trackingdelivery/updatetracking/idDelivery/idStatus/date";
+    String newStatusId = "0";
+    String urlTracking = "http://192.168.100.10:8000/trackingdelivery/updatetracking/{idTracking}/{newStatusId}/{currentDate}";
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
 
@@ -69,7 +73,8 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
 
     @Override
     public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
-        Toast.makeText(getApplicationContext(), "Selected User: " + users[position], Toast.LENGTH_SHORT).show();
+        getidStatus(users[position]);
+        //Toast.makeText(getApplicationContext(), "Selected User: " + users[position], Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -85,24 +90,75 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //getData();
-                trackProduct("1","23");
-               /* if (intentData.length() > 0) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(intentData)));
-                }*/
+                trackProduct("1", newStatusId);
             }
         });
     }
 
-    public void trackProduct(String idtracking,String newstatus) {
-        Date d = Calendar.getInstance().getTime();
-        String date = (d.toString());
-        String urltrack =urlTracking.replace("idDelivery",idtracking);
-        urltrack = urlTracking.replace("idStatus",newstatus);
-        urltrack = urlTracking.replace("date",date);
+    public void getidStatus(String status) {
+        String url = "http://192.168.100.10:8000/api-delivery/getIdStatus/" + status;
+        String res;
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urltrack, (String) null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        newStatusId = response.getString("id");
+                        Toast.makeText(getApplicationContext(), response.getString("id"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //txtBarcodeValue.setText("Resposne : " + response.toString());
+
+                }
+            }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    String message = null;
+                    if (volleyError instanceof NetworkError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ServerError) {
+                        message = "The server could not be found. Please try again after some time!!";
+                    } else if (volleyError instanceof AuthFailureError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ParseError) {
+                        message = "Parsing error! Please try again after some time!!";
+                    } else if (volleyError instanceof NoConnectionError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof TimeoutError) {
+                        message = "Connection TimeOut! Please check your internet connection.";
+                    }
+                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public void testBtn(String idtrack, String idStatus) {
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayDate = df.format(c);
+        String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtrack + "/" + idStatus + "/" + todayDate;
+        Toast.makeText(getApplicationContext(), url, Toast.LENGTH_LONG).show();
+    }
+
+    public void trackProduct(String idtracking, String newstatus) {
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String todayDate = df.format(c);
+        String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtracking + "/" + newstatus + "/" + todayDate;
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        try {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     txtBarcodeValue.setText("Resposne : " + response.toString());
