@@ -2,6 +2,7 @@ package com.christophelai.idp_colistraking;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     String baseUrl = "http://192.168.100.19:8000/";
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
-    Button btnAction;
+    Button btnAction, btnScan;
     String baseUrlTrackId = "";
     String statusById = "";
     String intentData = "";
@@ -61,6 +62,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     int spinnerPosition;
     Spinner spin;
     String oldId, newId;
+    Boolean camIsActive = true;
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
 
@@ -91,6 +93,23 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         txtBarcodeValue = findViewById(R.id.txtBarcodeValue);
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
+        btnScan = findViewById(R.id.btnScan);
+        btnScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (camIsActive) {
+                    camIsActive = false;
+                    onPause();
+                    getStatusById(newId);
+                    btnScan.setText("Re-scanner");
+                } else {
+                    camIsActive = true;
+                    Intent intent = getIntent();
+                    finish();
+                    startActivity(intent);
+                }
+            }
+        });
         btnAction.setClickable(false);
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,55 +120,55 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     }
 
     public void getStatusById(String idDelivery) {
-        oldId = idDelivery;
-        if (newId != oldId) {
-            String urlgetStatusById = baseUrl + "api-delivery/getStatusById/" + idDelivery;
-            String res;
-            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-            try {
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlgetStatusById, (String) null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            statusById = response.getString("trackingDesc");
-                            Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        //txtBarcodeValue.setText("Resposne : " + response.toString());
+        String urlgetStatusById = baseUrl + "api-delivery/getStatusById/" + idDelivery;
+        Log.i("getStatusById", "url : " + urlgetStatusById + " args : " + idDelivery);
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        try {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlgetStatusById, (String) null, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        statusById = response.getString("trackingDesc");
+                        spinnerPosition = adapter.getPosition(statusById);
+                        spin.setSelection(spinnerPosition);
+                        Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                }, new Response.ErrorListener() {
+                }
+            }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-                        String message = null;
-                        if (volleyError instanceof NetworkError) {
-                            message = "Cannot connect to Internet...Please check your connection!";
-                        } else if (volleyError instanceof ServerError) {
-                            message = "The server could not be found. Please try again after some time!!";
-                        } else if (volleyError instanceof AuthFailureError) {
-                            message = "Cannot connect to Internet...Please check your connection!";
-                        } else if (volleyError instanceof ParseError) {
-                            message = "Parsing error! Please try again after some time!!";
-                        } else if (volleyError instanceof NoConnectionError) {
-                            message = "Cannot connect to Internet...Please check your connection!";
-                        } else if (volleyError instanceof TimeoutError) {
-                            message = "Connection TimeOut! Please check your internet connection.";
-                        }
-                        Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
+                @Override
+                public void onErrorResponse(VolleyError volleyError) {
+                    String message = null;
+                    if (volleyError instanceof NetworkError) {
+                        message = "[getStatusById] Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ServerError) {
+                        message = "The server could not be found. Please try again after some time!!";
+                    } else if (volleyError instanceof AuthFailureError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof ParseError) {
+                        message = "Parsing error! Please try again after some time!!";
+                    } else if (volleyError instanceof NoConnectionError) {
+                        message = "Cannot connect to Internet...Please check your connection!";
+                    } else if (volleyError instanceof TimeoutError) {
+                        message = "Connection TimeOut! Please check your internet connection.";
                     }
-                });
-                requestQueue.add(jsonObjectRequest);
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
-            }
+                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
+                }
+            });
+            requestQueue.add(jsonObjectRequest);
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
+
 
     }
 
     public void getidStatus(String status) {
+
         String urlgetidStatus = baseUrl + "api-delivery/getIdStatus/" + status;
-        String res;
+        Log.i("getidStatus", "url : " + urlgetidStatus + " args : " + status);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlgetidStatus, (String) null, new Response.Listener<JSONObject>() {
@@ -157,6 +176,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 public void onResponse(JSONObject response) {
                     try {
                         newStatusId = response.getString("id");
+
                         Toast.makeText(getApplicationContext(), response.getString("id"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -169,7 +189,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 public void onErrorResponse(VolleyError volleyError) {
                     String message = null;
                     if (volleyError instanceof NetworkError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
+                        message = "[getidStatus] Cannot connect to Internet...Please check your connection!";
                     } else if (volleyError instanceof ServerError) {
                         message = "The server could not be found. Please try again after some time!!";
                     } else if (volleyError instanceof AuthFailureError) {
@@ -321,16 +341,16 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                         @Override
                         public void run() {
                             if (barcodes.valueAt(0).email != null) {
-                                /*txtBarcodeValue.removeCallbacks(null);
-                                intentData = barcodes.valueAt(0).email.address;
-                                txtBarcodeValue.setText(intentData);
-                                btnAction.setText("ADD CONTENT TO THE MAIL");*/
                             } else {
                                 baseUrlTrackId = barcodes.valueAt(0).displayValue;
                                 String[] result = baseUrlTrackId.split("/");
                                 //Result[5] is the position of the argument
-                                newId = result[5];
-
+                                //need check
+                                try {
+                                    newId = result[5];
+                                } catch (Exception e) {
+                                    Toast.makeText(getApplicationContext(), "Code Qr invalide", Toast.LENGTH_SHORT).show();
+                                }
                                 //on click scan
                               /*  Log.i("Loop", "newId : " + newId + " oldId : " + oldId);
 
@@ -357,7 +377,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     @Override
     protected void onPause() {
         super.onPause();
-        cameraSource.release();
+        cameraSource.stop();
     }
 
     @Override

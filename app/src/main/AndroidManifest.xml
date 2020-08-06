@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.christophelai.idp_colistraking">
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -22,11 +18,9 @@
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
         <activity android:name=".MainActivity" />
         <activity android:name=".ScannedBarcodeActivity" />
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
-
         <activity
             android:name=".SplashActivity">
             <intent-filter>
@@ -34,6 +28,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
     </application>
-
 </manifest>
