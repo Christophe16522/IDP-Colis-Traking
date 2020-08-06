@@ -1,8 +1,10 @@
 package com.christophelai.idp_colistraking;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,7 +16,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.android.volley.AuthFailureError;
@@ -43,9 +44,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class ScannedBarcodeActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
-
+public class ScannedBarcodeActivity extends Activity implements AdapterView.OnItemSelectedListener {
     private static final int REQUEST_CAMERA_PERMISSION = 201;
+    String baseUrl = "http://192.168.100.19:8000/";
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
     Button btnAction;
@@ -53,15 +54,16 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
     String statusById = "";
     String intentData = "";
     String[] users = {"Emballage", "Depart Entrepot", "Livraison", "Arriver a la poste", "Terminer"};
-    String url = "http://192.168.100.10/api-delivery/getstatus";
 
     String newStatusId = "0";
-    String urlTracking = "http://192.168.100.10:8000/trackingdelivery/updatetracking/{idTracking}/{newStatusId}/{currentDate}";
-    private BarcodeDetector barcodeDetector;
-    private CameraSource cameraSource;
-    ArrayAdapter<String> adapter ;
+    String urlTracking = baseUrl + "trackingdelivery/updatetracking/{idTracking}/{newStatusId}/{currentDate}";
+    ArrayAdapter<String> adapter;
     int spinnerPosition;
     Spinner spin;
+    String oldId, newId;
+    private BarcodeDetector barcodeDetector;
+    private CameraSource cameraSource;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,55 +101,58 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
     }
 
     public void getStatusById(String idDelivery) {
-        String url = "http://192.168.100.10:8000/api-delivery/getStatusById/" + idDelivery;
-        String res;
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        statusById = response.getString("trackingDesc");
-                        Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+        oldId = idDelivery;
+        if (newId != oldId) {
+            String urlgetStatusById = baseUrl + "api-delivery/getStatusById/" + idDelivery;
+            String res;
+            RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+            try {
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlgetStatusById, (String) null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            statusById = response.getString("trackingDesc");
+                            Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //txtBarcodeValue.setText("Resposne : " + response.toString());
                     }
-                    //txtBarcodeValue.setText("Resposne : " + response.toString());
-                }
-            }, new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    String message = null;
-                    if (volleyError instanceof NetworkError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof ServerError) {
-                        message = "The server could not be found. Please try again after some time!!";
-                    } else if (volleyError instanceof AuthFailureError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof ParseError) {
-                        message = "Parsing error! Please try again after some time!!";
-                    } else if (volleyError instanceof NoConnectionError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof TimeoutError) {
-                        message = "Connection TimeOut! Please check your internet connection.";
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        String message = null;
+                        if (volleyError instanceof NetworkError) {
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (volleyError instanceof ServerError) {
+                            message = "The server could not be found. Please try again after some time!!";
+                        } else if (volleyError instanceof AuthFailureError) {
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (volleyError instanceof ParseError) {
+                            message = "Parsing error! Please try again after some time!!";
+                        } else if (volleyError instanceof NoConnectionError) {
+                            message = "Cannot connect to Internet...Please check your connection!";
+                        } else if (volleyError instanceof TimeoutError) {
+                            message = "Connection TimeOut! Please check your internet connection.";
+                        }
+                        Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
                     }
-                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
-                }
-            });
-            requestQueue.add(jsonObjectRequest);
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+                requestQueue.add(jsonObjectRequest);
+            } catch (Exception e) {
+                Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
 
     }
 
     public void getidStatus(String status) {
-        String url = "http://192.168.100.10:8000/api-delivery/getIdStatus/" + status;
+        String urlgetidStatus = baseUrl + "api-delivery/getIdStatus/" + status;
         String res;
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urlgetidStatus, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
@@ -186,26 +191,16 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
 
     }
 
-    public void testBtn(String idtrack, String idStatus) {
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String todayDate = df.format(c);
-        String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtrack + "/" + idStatus + "/" + todayDate;
-        Toast.makeText(getApplicationContext(), url, Toast.LENGTH_LONG).show();
-    }
-
     public void trackProduct(String idtracking, String newstatus) {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         String todayDate = df.format(c);
 
-        // String url = "http://192.168.100.10:8000/trackingdelivery/updatetracking/" + idtracking + "/" + newstatus + "/" + todayDate;
-        String url = baseUrlTrackId + newstatus + "/" + todayDate;
+        String urltrackProduct = baseUrlTrackId + newstatus + "/" + todayDate;
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urltrackProduct, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     txtBarcodeValue.setText("Resposne : " + response.toString());
@@ -241,7 +236,7 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
     public void getData() {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
-
+            String url = baseUrl + "api-delivery/getstatus";
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -332,12 +327,21 @@ public class ScannedBarcodeActivity extends AppCompatActivity implements Adapter
                                 btnAction.setText("ADD CONTENT TO THE MAIL");*/
                             } else {
                                 baseUrlTrackId = barcodes.valueAt(0).displayValue;
-                                String idDeliveri  =baseUrlTrackId.replace("http://192.168.100.10:8000/trackingdelivery/updatetracking/","");
-                                getStatusById(idDeliveri);
+                                String[] result = baseUrlTrackId.split("/");
+                                //Result[5] is the position of the argument
+                                newId = result[5];
+
+                                //on click scan
+                              /*  Log.i("Loop", "newId : " + newId + " oldId : " + oldId);
+
+                                if (newId != oldId) {
+                                    Log.i("Condition call", "newId : " + newId + " oldId : " + oldId);
+                                    getStatusById(result[5]);
+                                }
+*/
                                 //change spiner
-                                spinnerPosition = adapter.getPosition(statusById);
-                                spin.setSelection(spinnerPosition);
-                                //c
+                                //spinnerPosition = adapter.getPosition(statusById);
+                                //spin.setSelection(spinnerPosition);
                                 btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
                                 txtBarcodeValue.setText(intentData);
