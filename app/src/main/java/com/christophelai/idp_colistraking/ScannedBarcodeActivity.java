@@ -36,13 +36,16 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class ScannedBarcodeActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -54,34 +57,38 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     String baseUrlTrackId = "";
     String statusById = "";
     String intentData = "";
-    String[] users = {"Emballage", "Depart Entrepot", "Livraison", "Arriver a la poste", "Terminer"};
-
+    ArrayList<String> spinnerStatusList = new ArrayList<String>();
+    JSONArray status;
     String newStatusId = "0";
-    String urlTracking = baseUrl + "trackingdelivery/updatetracking/{idTracking}/{newStatusId}/{currentDate}";
     ArrayAdapter<String> adapter;
     int spinnerPosition;
     Spinner spin;
-    String oldId, newId;
+    String newId;
     Boolean camIsActive = true;
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
-
+    String[] stockArr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanned_barcode);
+        initViews();
         spin = (Spinner) findViewById(R.id.spinner1);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, users);
+
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerStatusList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spin.setAdapter(adapter);
         spin.setOnItemSelectedListener(this);
-        initViews();
     }
 
     @Override
     public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
-        getidStatus(users[position]);
-        //Toast.makeText(getApplicationContext(), "Selected User: " + users[position], Toast.LENGTH_SHORT).show();
+        String item = arg0.getItemAtPosition(position).toString();
+
+        // Showing selected spinner item
+        Toast.makeText(arg0.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        // getidStatus(spinnerStatusList.get(position));
+        //  Toast.makeText(getApplicationContext(), "Selected User: " + spinnerStatusList.get(position), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -90,6 +97,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     }
 
     private void initViews() {
+        getData();
         txtBarcodeValue = findViewById(R.id.txtBarcodeValue);
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
@@ -253,15 +261,36 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         }
     }
 
+    public void jsonToList(JSONArray source, List<String> destination) {
+
+        try {
+            for (int i = 0; i < source.length(); i++) {
+                JSONObject s = source.getJSONObject(i);
+                Log.i("Add to users", " args : " + s.getString("trackingDesc"));
+                destination.add(s.getString("trackingDesc"));
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "Error : dans la conversion json", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
     public void getData() {
+
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
             String url = baseUrl + "api-delivery/getstatus";
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    txtBarcodeValue.setText("Resposne : " + response.toString());
-                    Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
+                    try {
+                        status = response.getJSONArray("status");
+                        jsonToList(status, spinnerStatusList);
+                        Log.i("getData", " args : " + spinnerStatusList);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }, new Response.ErrorListener() {
 
