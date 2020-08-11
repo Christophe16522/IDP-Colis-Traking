@@ -20,16 +20,19 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -65,9 +68,12 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     Spinner spin;
     String newId;
     Boolean camIsActive = true;
+    String[] stockArr;
+    ArrayList<String> trackingStatus = new ArrayList<>();
+    String urlListTrackingStatus = baseUrl + "api-delivery/getstatus";
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
-    String[] stockArr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +81,11 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         initViews();
         spin = (Spinner) findViewById(R.id.spinner1);
 
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerStatusList);
+        loadSpinnerData(urlListTrackingStatus);
+       /* adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerStatusList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spin.setAdapter(adapter);
+        spin.setAdapter(adapter);*/
+
         spin.setOnItemSelectedListener(this);
     }
 
@@ -87,8 +95,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
 
         // Showing selected spinner item
         Toast.makeText(arg0.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-        // getidStatus(spinnerStatusList.get(position));
-        //  Toast.makeText(getApplicationContext(), "Selected User: " + spinnerStatusList.get(position), Toast.LENGTH_SHORT).show();
+        getidStatus(item);
     }
 
     @Override
@@ -97,10 +104,11 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     }
 
     private void initViews() {
-        getData();
+        //  getData();
         txtBarcodeValue = findViewById(R.id.txtBarcodeValue);
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
+        btnAction.setClickable(false);
         btnScan = findViewById(R.id.btnScan);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,7 +145,9 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 public void onResponse(JSONObject response) {
                     try {
                         statusById = response.getString("trackingDesc");
+                        Log.i("getStatusById", "response : " + statusById);
                         spinnerPosition = adapter.getPosition(statusById);
+                        Log.i("getStatusById", "spinnerPosition : " + spinnerPosition);
                         spin.setSelection(spinnerPosition);
                         Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
@@ -276,6 +286,44 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
 
     }
 
+    private void loadSpinnerData(String url) {
+        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    Log.i("loadSpinnerData", " args : " + response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    if (jsonObject.getInt("success") == 1) {
+                        JSONArray jsonArray = jsonObject.getJSONArray("trackingstatus");
+                        Log.i("in condition success", " args : " + jsonArray);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                            String country = jsonObject1.getString("trackingDesc");
+                            Log.i("in loop", " args : " + country);
+                            trackingStatus.add(country);
+                        }
+                    }
+                    //  spin.setAdapter(new ArrayAdapter<String>(ScannedBarcodeActivity.this, android.R.layout.simple_spinner_dropdown_item, trackingStatus));
+                    adapter = new ArrayAdapter<String>(ScannedBarcodeActivity.this, android.R.layout.simple_spinner_item, trackingStatus);
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spin.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+        int socketTimeout = 30000;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
+        requestQueue.add(stringRequest);
+    }
+
     public void getData() {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -391,7 +439,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                                 //change spiner
                                 //spinnerPosition = adapter.getPosition(statusById);
                                 //spin.setSelection(spinnerPosition);
-                                btnAction.setText("LAUNCH URL");
+                                //  btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
                                 txtBarcodeValue.setText(intentData);
                             }

@@ -89,7 +89,7 @@
         android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
         android:background="#FFFFFF"
-        android:drawableLeft="@android:drawable/ic_dialog_map"
+        android:drawableLeft="@android:drawable/ic_menu_myplaces"
         android:padding="16dp"
         android:text="Track Product"
         android:textSize="24sp"
