@@ -38,6 +38,7 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +49,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class ScannedBarcodeActivity extends Activity implements AdapterView.OnItemSelectedListener {
@@ -56,7 +56,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     String baseUrl = "http://192.168.100.19:8000/";
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
-    Button btnAction, btnScan;
+    Button btnAction, btnScan,button2;
     String baseUrlTrackId = "";
     String statusById = "";
     String intentData = "";
@@ -80,7 +80,9 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         setContentView(R.layout.activity_scanned_barcode);
         initViews();
         spin = (Spinner) findViewById(R.id.spinner1);
-
+        spin.setVisibility(View.GONE);
+        btnAction.setVisibility(View.GONE);
+        txtBarcodeValue.setVisibility(View.GONE);
         loadSpinnerData(urlListTrackingStatus);
        /* adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerStatusList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -94,7 +96,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         String item = arg0.getItemAtPosition(position).toString();
 
         // Showing selected spinner item
-        Toast.makeText(arg0.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
+        //Toast.makeText(arg0.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
         getidStatus(item);
     }
 
@@ -104,12 +106,11 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     }
 
     private void initViews() {
-        //  getData();
         txtBarcodeValue = findViewById(R.id.txtBarcodeValue);
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
-        btnAction.setClickable(false);
         btnScan = findViewById(R.id.btnScan);
+        button2 = findViewById(R.id.button2);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,6 +118,8 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     camIsActive = false;
                     onPause();
                     getStatusById(newId);
+                    spin.setVisibility(View.VISIBLE);
+                    btnAction.setVisibility(View.VISIBLE);
                     btnScan.setText("Re-scanner");
                 } else {
                     camIsActive = true;
@@ -126,13 +129,24 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 }
             }
         });
-        btnAction.setClickable(false);
         btnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                trackProduct("1", newStatusId);
+                trackProduct(newStatusId);
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
             }
         });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ScannedBarcodeActivity.this, SaveIdentityActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
     }
 
     public void getStatusById(String idDelivery) {
@@ -149,7 +163,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                         spinnerPosition = adapter.getPosition(statusById);
                         Log.i("getStatusById", "spinnerPosition : " + spinnerPosition);
                         spin.setSelection(spinnerPosition);
-                        Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -195,7 +209,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     try {
                         newStatusId = response.getString("id");
 
-                        Toast.makeText(getApplicationContext(), response.getString("id"), Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplicationContext(), response.getString("id"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -229,7 +243,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
 
     }
 
-    public void trackProduct(String idtracking, String newstatus) {
+    public void trackProduct(String newstatus) {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
@@ -241,8 +255,8 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urltrackProduct, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    txtBarcodeValue.setText("Resposne : " + response.toString());
-                    Toast.makeText(getApplicationContext(), "I am OK !" + response.toString(), Toast.LENGTH_LONG).show();
+                    //txtBarcodeValue.setText("Resposne : " + response.toString());
+                    Toast.makeText(getApplicationContext(), "Tracking updated", Toast.LENGTH_LONG).show();
                 }
             }, new Response.ErrorListener() {
 
@@ -271,20 +285,6 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         }
     }
 
-    public void jsonToList(JSONArray source, List<String> destination) {
-
-        try {
-            for (int i = 0; i < source.length(); i++) {
-                JSONObject s = source.getJSONObject(i);
-                Log.i("Add to users", " args : " + s.getString("trackingDesc"));
-                destination.add(s.getString("trackingDesc"));
-            }
-
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Error : dans la conversion json", Toast.LENGTH_LONG).show();
-        }
-
-    }
 
     private void loadSpinnerData(String url) {
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
@@ -324,48 +324,6 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         requestQueue.add(stringRequest);
     }
 
-    public void getData() {
-
-        RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
-        try {
-            String url = baseUrl + "api-delivery/getstatus";
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        status = response.getJSONArray("status");
-                        jsonToList(status, spinnerStatusList);
-                        Log.i("getData", " args : " + spinnerStatusList);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError volleyError) {
-                    String message = null;
-                    if (volleyError instanceof NetworkError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof ServerError) {
-                        message = "The server could not be found. Please try again after some time!!";
-                    } else if (volleyError instanceof AuthFailureError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof ParseError) {
-                        message = "Parsing error! Please try again after some time!!";
-                    } else if (volleyError instanceof NoConnectionError) {
-                        message = "Cannot connect to Internet...Please check your connection!";
-                    } else if (volleyError instanceof TimeoutError) {
-                        message = "Connection TimeOut! Please check your internet connection.";
-                    }
-                    Toast.makeText(getApplicationContext(), "Error : " + message, Toast.LENGTH_LONG).show();
-                }
-            });
-            requestQueue.add(jsonObjectRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     private void initialiseDetectorsAndSources() {
 
