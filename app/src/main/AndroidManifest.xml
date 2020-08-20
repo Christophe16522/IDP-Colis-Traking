@@ -27,7 +27,7 @@
         <activity android:name=".SaveIdentityActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ScannedBarcodeActivity" />
-
+        <activity android:name=".SignActivity"/>
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />

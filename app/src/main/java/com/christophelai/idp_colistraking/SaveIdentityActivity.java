@@ -80,6 +80,17 @@ public class SaveIdentityActivity extends Activity {
                 Toast.makeText(getApplicationContext(), "Upload clicked", Toast.LENGTH_SHORT).show();
             }
         });
+
+        Button btnSign = findViewById(R.id.btnSign);
+        btnSign.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent i = new Intent(SaveIdentityActivity.this, SignActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
         permissions.add(CAMERA);
         permissions.add(WRITE_EXTERNAL_STORAGE);
         permissions.add(READ_EXTERNAL_STORAGE);

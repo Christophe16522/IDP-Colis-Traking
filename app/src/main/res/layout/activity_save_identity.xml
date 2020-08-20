@@ -22,6 +22,26 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
+        android:id="@+id/btnSign"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@android:drawable/ic_menu_edit"
+        android:padding="16dp"
+        android:text="Signature"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        tools:ignore="MissingConstraints" />
+
+    <Button
         android:id="@+id/fab"
         android:layout_width="157dp"
         android:layout_height="58dp"
@@ -44,11 +64,11 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginBottom="16dp"
-        android:drawableRight="@android:drawable/ic_menu_send"
-        android:text="Send"
-        android:padding="16dp"
-        android:textSize="24sp"
         android:background="#FFFFFF"
+        android:drawableRight="@android:drawable/ic_menu_send"
+        android:padding="16dp"
+        android:text="Send"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
