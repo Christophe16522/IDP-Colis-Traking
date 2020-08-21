@@ -120,6 +120,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     getStatusById(newId);
                     spin.setVisibility(View.VISIBLE);
                     btnAction.setVisibility(View.VISIBLE);
+                    button2.setVisibility(View.VISIBLE);
                     btnScan.setText("Re-scanner");
                 } else {
                     camIsActive = true;
