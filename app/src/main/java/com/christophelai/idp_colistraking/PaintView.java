@@ -8,9 +8,11 @@ import android.graphics.Path;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 
 public class PaintView extends View {
     LayoutParams params;
+    Button btn;
     private Path path = new Path();
     private Paint brush = new Paint();
 
@@ -24,7 +26,7 @@ public class PaintView extends View {
         brush.setStrokeWidth(8f);
 
         params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-
+        btn = new Button(context);
     }
 
     @Override

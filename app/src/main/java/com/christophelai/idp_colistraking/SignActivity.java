@@ -11,6 +11,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -24,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class SignActivity extends Activity {
+public class SignActivity extends AppCompatActivity {
     PaintView paintView;
     private String UploadUrl = "http://192.168.100.19:8000/api-delivery/upload";
     @Override
