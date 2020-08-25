@@ -1,6 +1,7 @@
 package com.christophelai.idp_colistraking;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import java.util.UUID;
 public class SignActivity extends AppCompatActivity {
     PaintView paintView;
     private String UploadUrl = "http://192.168.100.19:8000/api-delivery/upload";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,11 +47,42 @@ public class SignActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+      /*  Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
+        startActivity(i);
+        finish();*/
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("Are you sure, You wanted to make decision");
+        alertDialogBuilder.setPositiveButton("yes",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
+                        startActivity(i);
+                        finish();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.back:
+                Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
+                startActivity(i);
+                finish();
+                return true;
             case R.id.save:
                 uploadImage();
                 return true;
+
             case R.id.clear:
                 Intent intent = getIntent();
                 finish();

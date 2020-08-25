@@ -106,6 +106,13 @@ public class SaveIdentityActivity extends Activity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(SaveIdentityActivity.this, ScannedBarcodeActivity.class);
+        startActivity(i);
+        finish();
+    }
+
     private void uploadImage() {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, UploadUrl, new com.android.volley.Response.Listener<String>() {
             @Override

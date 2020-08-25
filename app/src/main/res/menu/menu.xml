@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/save"
-        android:title="Sauvegarder" />
+        android:title="Valider" />
     <item
         android:id="@+id/clear"
-        android:title="Tous Effacer" />
+        android:title="Effacer" />
+    <item
+        android:id="@+id/back"
+        android:title="Retour" />
 </menu>
