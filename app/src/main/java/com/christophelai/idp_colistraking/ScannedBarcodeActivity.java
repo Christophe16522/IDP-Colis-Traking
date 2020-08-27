@@ -2,9 +2,11 @@ package com.christophelai.idp_colistraking;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -38,25 +40,20 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
 public class ScannedBarcodeActivity extends Activity implements AdapterView.OnItemSelectedListener {
     private static final int REQUEST_CAMERA_PERMISSION = 201;
-    String baseUrl = "http://192.168.100.19:8000/";
+    String baseUrl = Constant.SERVER + "/";
     SurfaceView surfaceView;
     TextView txtBarcodeValue;
-    Button btnAction, btnScan,button2;
+    Button btnAction, btnScan, btnSaveID;
     String baseUrlTrackId = "";
     String statusById = "";
     String intentData = "";
@@ -79,10 +76,11 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scanned_barcode);
         initViews();
-        spin = (Spinner) findViewById(R.id.spinner1);
+        spin = findViewById(R.id.spinner1);
         spin.setVisibility(View.GONE);
         btnAction.setVisibility(View.GONE);
         txtBarcodeValue.setVisibility(View.GONE);
+        btnSaveID.setClickable(false);
         loadSpinnerData(urlListTrackingStatus);
        /* adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerStatusList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -110,7 +108,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         surfaceView = findViewById(R.id.surfaceView);
         btnAction = findViewById(R.id.btnAction);
         btnScan = findViewById(R.id.btnScan);
-        button2 = findViewById(R.id.button2);
+        btnSaveID = findViewById(R.id.btnSaveID);
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +118,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     getStatusById(newId);
                     spin.setVisibility(View.VISIBLE);
                     btnAction.setVisibility(View.VISIBLE);
-                    button2.setVisibility(View.VISIBLE);
+                    btnSaveID.setVisibility(View.VISIBLE);
                     btnScan.setText("Re-scanner");
                 } else {
                     camIsActive = true;
@@ -139,10 +137,11 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 startActivity(intent);
             }
         });
-        button2.setOnClickListener(new View.OnClickListener() {
+        btnSaveID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(ScannedBarcodeActivity.this, SaveIdentityActivity.class);
+                i.putExtra("nCommande", newId);
                 startActivity(i);
                 finish();
             }
@@ -194,8 +193,6 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     public void getidStatus(String status) {
@@ -245,11 +242,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     }
 
     public void trackProduct(String newstatus) {
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String todayDate = df.format(c);
-
+        String todayDate = Constant.getToday("yyyy-MM-dd");
         String urltrackProduct = baseUrlTrackId + newstatus + "/" + todayDate;
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
@@ -384,24 +377,18 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                                 //need check
                                 try {
                                     newId = result[5];
+                                    btnSaveID.setClickable(true);
                                 } catch (Exception e) {
+                                    btnSaveID.setClickable(false);
                                     Toast.makeText(getApplicationContext(), "Code Qr invalide", Toast.LENGTH_SHORT).show();
                                 }
-                                //on click scan
-                              /*  Log.i("Loop", "newId : " + newId + " oldId : " + oldId);
-
-                                if (newId != oldId) {
-                                    Log.i("Condition call", "newId : " + newId + " oldId : " + oldId);
-                                    getStatusById(result[5]);
-                                }
-*/
-                                //change spiner
-                                //spinnerPosition = adapter.getPosition(statusById);
-                                //spin.setSelection(spinnerPosition);
-                                //  btnAction.setText("LAUNCH URL");
                                 intentData = barcodes.valueAt(0).displayValue;
                                 txtBarcodeValue.setText(intentData);
                             }
+                            Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                            vibrator.vibrate(1);
+                            txtBarcodeValue.setText(barcodes.valueAt(0).displayValue);
+                            txtBarcodeValue.setVisibility(View.VISIBLE);
                         }
                     });
 

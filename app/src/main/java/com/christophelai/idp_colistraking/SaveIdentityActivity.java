@@ -20,6 +20,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -49,6 +50,10 @@ public class SaveIdentityActivity extends Activity {
     private final static int IMAGE_RESULT = 200;
     private final int IMG_REQUEST = 1;
     Uri picUri;
+
+    CheckBox cbIsIDCard;
+    EditText imageNameText;
+    String imageNameTextValue;
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
@@ -57,12 +62,32 @@ public class SaveIdentityActivity extends Activity {
     private EditText name;
     private ImageView imgView;
     private Bitmap bitmap;
-    private String UploadUrl = "http://192.168.100.19:8000/api-delivery/upload";
+    private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
+    private String nCommande;
+    private String nomImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_identity);
+        EditText imageNameEditText = (EditText) findViewById(R.id.imageNameText);
+        imageNameTextValue = imageNameEditText.getText().toString();
+        imageNameText = (EditText) findViewById(R.id.imageNameText);
+        Intent saveIdentityIntent = getIntent();
+        nCommande = saveIdentityIntent.getStringExtra("nCommande");
+        cbIsIDCard = (CheckBox) findViewById(R.id.cbIsIDCard);
+        cbIsIDCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cbIsIDCard.isChecked()) {
+                    imageNameText.setEnabled(false);
+                    nomImage = "carte_identite_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
+                } else {
+                    imageNameText.setEnabled(true);
+                    nomImage = imageNameTextValue + "_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
+                }
+            }
+        });
 
         Button fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,8 +110,8 @@ public class SaveIdentityActivity extends Activity {
         btnSign.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent i = new Intent(SaveIdentityActivity.this, SignActivity.class);
+                i.putExtra("nCommande", nCommande);
                 startActivity(i);
                 finish();
             }
@@ -104,6 +129,23 @@ public class SaveIdentityActivity extends Activity {
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
 
+    }
+
+    public void onCheckboxClicked(View view) {
+        // Is the view now checked?
+        boolean checked = ((CheckBox) view).isChecked();
+
+        // Check which checkbox was clicked
+        switch (view.getId()) {
+            case R.id.cbIsIDCard:
+                if (checked) {
+
+                }
+                // Put some meat on the sandwich
+                else
+                    // Remove the meat
+                    break;
+        }
     }
 
     @Override
@@ -137,7 +179,8 @@ public class SaveIdentityActivity extends Activity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("name", UUID.randomUUID().toString());
+                params.put("id", nCommande);
+                params.put("name", nomImage);
                 params.put("image", imageToString(bitmap));
                 return params;
             }

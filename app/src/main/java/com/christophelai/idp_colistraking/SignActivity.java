@@ -25,16 +25,18 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class SignActivity extends AppCompatActivity {
     PaintView paintView;
-    private String UploadUrl = "http://192.168.100.19:8000/api-delivery/upload";
+    String nCommande, today;
+    private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Intent saveIdentityIntent = getIntent();
+        today = Constant.getToday("yyyy_MM_dd_HH_mm_ss");
+        nCommande = saveIdentityIntent.getStringExtra("nCommande");
         paintView = new PaintView(this);
         setContentView(paintView);
     }
@@ -58,6 +60,7 @@ public class SignActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
+                        i.putExtra("nCommande", nCommande);
                         startActivity(i);
                         finish();
                     }
@@ -73,19 +76,22 @@ public class SignActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
+        i.putExtra("nCommande", nCommande);
         switch (item.getItemId()) {
             case R.id.back:
-                Intent i = new Intent(SignActivity.this, SaveIdentityActivity.class);
                 startActivity(i);
                 finish();
                 return true;
             case R.id.save:
                 uploadImage();
+                startActivity(i);
+                finish();
                 return true;
-
             case R.id.clear:
                 Intent intent = getIntent();
                 finish();
+                intent.putExtra("nCommande", nCommande);
                 startActivity(intent);
                 return true;
             default:
@@ -124,7 +130,8 @@ public class SignActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("name", UUID.randomUUID().toString());
+                params.put("id", nCommande);
+                params.put("name", "singature-" + nCommande + "-" + today);
                 params.put("image", captureScreen());
                 return params;
             }
