@@ -281,6 +281,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
 
 
     private void loadSpinnerData(String url) {
+        Log.i("loadSpinnerData", " args : " + url);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -303,7 +304,9 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin.setAdapter(adapter);
                 } catch (JSONException e) {
+                    Log.e("loadSpinnerData Error", " args : " + e.getMessage());
                     e.printStackTrace();
+
                 }
             }
         }, new Response.ErrorListener() {
@@ -369,22 +372,23 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     txtBarcodeValue.post(new Runnable() {
                         @Override
                         public void run() {
-                            if (barcodes.valueAt(0).email != null) {
-                            } else {
-                                baseUrlTrackId = barcodes.valueAt(0).displayValue;
-                                String[] result = baseUrlTrackId.split("/");
-                                //Result[5] is the position of the argument
-                                //need check
-                                try {
-                                    newId = result[5];
-                                    btnSaveID.setClickable(true);
-                                } catch (Exception e) {
-                                    btnSaveID.setClickable(false);
-                                    Toast.makeText(getApplicationContext(), "Code Qr invalide", Toast.LENGTH_SHORT).show();
-                                }
-                                intentData = barcodes.valueAt(0).displayValue;
-                                txtBarcodeValue.setText(intentData);
+
+                            baseUrlTrackId = barcodes.valueAt(0).displayValue;
+                            String[] result = baseUrlTrackId.split("/");
+                            Log.i("receiveDetections", " args : " + result);
+
+                            //Result[0] is the position of the argument
+                            //need check
+                            try {
+                                newId = result[0];
+                                btnSaveID.setClickable(true);
+                            } catch (Exception e) {
+                                btnSaveID.setClickable(false);
+                                Toast.makeText(getApplicationContext(), "Code Qr invalide", Toast.LENGTH_SHORT).show();
                             }
+                            intentData = barcodes.valueAt(0).displayValue;
+                            txtBarcodeValue.setText(intentData);
+
                             Vibrator vibrator = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                             vibrator.vibrate(1);
                             txtBarcodeValue.setText(barcodes.valueAt(0).displayValue);

@@ -2,9 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.christophelai.idp_colistraking">
 
-    <uses-permission
-        android:name="android.permission.INTERNET"
-        android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -21,10 +19,12 @@
         android:allowBackup="true"
         android:icon="@drawable/logomini"
         android:label="@string/app_name"
+        android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".Login"></activity>
         <activity android:name=".SaveIdentityActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".ScannedBarcodeActivity" />
