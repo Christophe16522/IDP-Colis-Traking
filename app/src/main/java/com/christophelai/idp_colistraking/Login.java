@@ -40,9 +40,6 @@ public class Login extends Activity implements View.OnClickListener {
         progressBar = findViewById(R.id.progressLogin);
         editEmail = (EditText) findViewById(R.id.editTextTextEmailAddress);
         editPass = (EditText) findViewById(R.id.editTextTextPassword);
-        email = editEmail.getText().toString();
-        pass = editPass.getText().toString();
-        url = Constant.SERVER + "/api-login/" + email + "/" + pass;
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
     }
@@ -52,6 +49,9 @@ public class Login extends Activity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.btnLogin:
                 progressBar.setVisibility(View.VISIBLE);
+                email = editEmail.getText().toString();
+                pass = editPass.getText().toString();
+                url = Constant.SERVER + "/api-login/" + email + "/" + pass;
                 login();
         }
     }
@@ -65,17 +65,15 @@ public class Login extends Activity implements View.OnClickListener {
                     try {
                         status = response.getString("status");
                         res = response.getString("response");
-                        if (status == "200") {
+                        if (status.equals("200")) {
                             startActivity(new Intent(Login.this, MainActivity.class));
-                        } else if (status == "201") {
+                        } else if (status.equals("201")) {
                             Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
                         }
                         progressBar.setVisibility(View.GONE);
-                        //Toast.makeText(getApplicationContext(), response.getString("id"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //txtBarcodeValue.setText("Resposne : " + response.toString());
                 }
             }, new Response.ErrorListener() {
 
