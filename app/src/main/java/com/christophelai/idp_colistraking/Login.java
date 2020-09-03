@@ -2,7 +2,9 @@ package com.christophelai.idp_colistraking;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,7 +31,7 @@ public class Login extends Activity implements View.OnClickListener {
     Button btnLogin;
     ProgressBar progressBar;
     String email, pass, url, res, status;
-
+    SharedPreferences pref;
     EditText editEmail, editPass;
 
 
@@ -42,6 +44,7 @@ public class Login extends Activity implements View.OnClickListener {
         editPass = (EditText) findViewById(R.id.editTextTextPassword);
         btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(this);
+        pref = getSharedPreferences("user_details", MODE_PRIVATE);
     }
 
     @Override
@@ -65,7 +68,15 @@ public class Login extends Activity implements View.OnClickListener {
                     try {
                         status = response.getString("status");
                         res = response.getString("response");
+                        Log.i("Login", " args : " + res);
+
                         if (status.equals("200")) {
+                            JSONObject user = new JSONObject(res);
+                            SharedPreferences.Editor editor = pref.edit();
+                            editor.putString("idCarrier", user.getString("id"));
+                            editor.putString("fullname", user.getString("fullname"));
+                            editor.putString("email", user.getString("email"));
+                            editor.commit();
                             startActivity(new Intent(Login.this, MainActivity.class));
                         } else if (status.equals("201")) {
                             Toast.makeText(getApplicationContext(), res, Toast.LENGTH_LONG).show();
