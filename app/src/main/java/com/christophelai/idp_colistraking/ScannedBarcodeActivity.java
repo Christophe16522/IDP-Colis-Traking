@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -70,7 +71,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     String urlListTrackingStatus = baseUrl + "api-delivery/getstatus";
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
-
+    SharedPreferences prf;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +113,12 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
         btnScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (camIsActive) {
+                    Constant.SaveLog("{\n" +
+                            "    \"btn\":\"btnScan\",\n" +
+                            "    \"msg\":\"Take Picture of Code\"\n" +
+                            "}", prf.getString("idCarrier", null), ScannedBarcodeActivity.this);
                     camIsActive = false;
                     onPause();
                     getStatusById(newId);
@@ -121,6 +127,10 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     btnSaveID.setVisibility(View.VISIBLE);
                     btnScan.setText("Re-scanner");
                 } else {
+                    Constant.SaveLog("{\n" +
+                            "    \"btn\":\"btnScan\",\n" +
+                            "    \"msg\":\"Retake Picture of Code\"\n" +
+                            "}", prf.getString("idCarrier", null), ScannedBarcodeActivity.this);
                     camIsActive = true;
                     Intent intent = getIntent();
                     finish();
