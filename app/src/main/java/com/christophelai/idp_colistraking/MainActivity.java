@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    Button btnScanBarecode, btnLogout;
+    Button btnScanBarecode, btnLogout,btnAppointment;
     SharedPreferences prf;
 
     @Override
@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private void initViews() {
         btnScanBarecode = findViewById(R.id.btnOpenScan);
+        btnLogout = findViewById(R.id.btnLogout);
         btnLogout = findViewById(R.id.btnLogout);
         btnScanBarecode.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
@@ -77,14 +78,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         "    \"btn\":\"btnOpenScan\",\n" +
                         "    \"msg\":\"Open ScannedBarcodeActivity\"\n" +
                         "}", prf.getString("idCarrier", null), MainActivity.this);
-
+/*
             case R.id.btnSettings:
                 Log.w("Tag On Click", "btn Setting");
                 startActivity(new Intent(MainActivity.this, Settings.class));
                 Constant.SaveLog("{\n" +
                         "    \"btn\":\"btnSettings\",\n" +
                         "    \"msg\":\"Open Setting\"\n" +
-                        "}", prf.getString("idCarrier", null), MainActivity.this);
+                        "}", prf.getString("idCarrier", null), MainActivity.this);*/
         }
     }
 

@@ -24,7 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Settings"></activity>
+        <activity android:name=".MenuAppointment"></activity>
+        <activity android:name=".RequestAppointment" />
+        <activity android:name=".Settings" />
         <activity android:name=".Login" />
         <activity android:name=".SaveIdentityActivity" />
         <activity android:name=".MainActivity" />

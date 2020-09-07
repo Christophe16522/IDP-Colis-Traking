@@ -69,9 +69,10 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
     String[] stockArr;
     ArrayList<String> trackingStatus = new ArrayList<>();
     String urlListTrackingStatus = baseUrl + "api-delivery/getstatus";
+    SharedPreferences prf;
     private BarcodeDetector barcodeDetector;
     private CameraSource cameraSource;
-    SharedPreferences prf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,10 +116,6 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
             public void onClick(View v) {
 
                 if (camIsActive) {
-                    Constant.SaveLog("{\n" +
-                            "    \"btn\":\"btnScan\",\n" +
-                            "    \"msg\":\"Take Picture of Code\"\n" +
-                            "}", prf.getString("idCarrier", null), ScannedBarcodeActivity.this);
                     camIsActive = false;
                     onPause();
                     getStatusById(newId);
@@ -127,10 +124,6 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                     btnSaveID.setVisibility(View.VISIBLE);
                     btnScan.setText("Re-scanner");
                 } else {
-                    Constant.SaveLog("{\n" +
-                            "    \"btn\":\"btnScan\",\n" +
-                            "    \"msg\":\"Retake Picture of Code\"\n" +
-                            "}", prf.getString("idCarrier", null), ScannedBarcodeActivity.this);
                     camIsActive = true;
                     Intent intent = getIntent();
                     finish();
@@ -253,10 +246,12 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
 
     public void trackProduct(String newstatus) {
         String todayDate = Constant.getToday("yyyy-MM-dd");
-        String urltrackProduct = baseUrlTrackId + newstatus + "/" + todayDate;
+        String[] result = baseUrlTrackId.split("/");
+        String url = baseUrl + "trackingdelivery/updatetracking/" + result[0] + "/" + newstatus + "/" + todayDate;
+
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         try {
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, urltrackProduct, (String) null, new Response.Listener<JSONObject>() {
+            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     //txtBarcodeValue.setText("Resposne : " + response.toString());
