@@ -19,10 +19,13 @@ import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,13 +42,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class SaveIdentityActivity extends Activity {
+public class SaveIdentityActivity extends Activity implements AdapterView.OnItemSelectedListener{
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private final static int IMAGE_RESULT = 200;
     private final int IMG_REQUEST = 1;
@@ -54,6 +56,8 @@ public class SaveIdentityActivity extends Activity {
     CheckBox cbIsIDCard;
     EditText imageNameText;
     String imageNameTextValue;
+    Spinner spin;
+    ArrayAdapter<String> adapter;
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
@@ -65,29 +69,20 @@ public class SaveIdentityActivity extends Activity {
     private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
     private String nCommande;
     private String nomImage;
-
+   String[] spinnerStatusList = {"Carte d'identité","Colis endommagé","Produit endommagé","Colis et produit endommagés","Inconnu a l'adresse"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_save_identity);
-        EditText imageNameEditText = (EditText) findViewById(R.id.imageNameText);
-        imageNameTextValue = imageNameEditText.getText().toString();
-        imageNameText = (EditText) findViewById(R.id.imageNameText);
         Intent saveIdentityIntent = getIntent();
         nCommande = saveIdentityIntent.getStringExtra("nCommande");
-        cbIsIDCard = (CheckBox) findViewById(R.id.cbIsIDCard);
-        cbIsIDCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (cbIsIDCard.isChecked()) {
-                    imageNameText.setEnabled(false);
-                    nomImage = "carte_identite_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
-                } else {
-                    imageNameText.setEnabled(true);
-                    nomImage = imageNameTextValue + "_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
-                }
-            }
-        });
+        spin = findViewById(R.id.spinner);
+        adapter = new ArrayAdapter<String>(SaveIdentityActivity.this, android.R.layout.simple_spinner_item, spinnerStatusList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spin.setAdapter(adapter);
+
+        spin.setOnItemSelectedListener(this);
+
 
         Button fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -129,23 +124,6 @@ public class SaveIdentityActivity extends Activity {
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
 
-    }
-
-    public void onCheckboxClicked(View view) {
-        // Is the view now checked?
-        boolean checked = ((CheckBox) view).isChecked();
-
-        // Check which checkbox was clicked
-        switch (view.getId()) {
-            case R.id.cbIsIDCard:
-                if (checked) {
-
-                }
-                // Put some meat on the sandwich
-                else
-                    // Remove the meat
-                    break;
-        }
     }
 
     @Override
@@ -380,5 +358,17 @@ public class SaveIdentityActivity extends Activity {
                 break;
         }
 
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        imageNameTextValue = adapterView.getItemAtPosition(i).toString();
+        nomImage = imageNameTextValue + "_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+        imageNameTextValue="Carte d'identité";
+        nomImage = imageNameTextValue + "_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
     }
 }
