@@ -9,17 +9,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
     Button btnScanBarecode, btnLogout,btnAppointment;
     SharedPreferences prf;
-
+    TextView welcomeTxt;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prf = getSharedPreferences("user_details", MODE_PRIVATE);
+        welcomeTxt  = (TextView) findViewById(R.id.txtBienvenu);
+        welcomeTxt.setText("Bienvenu , "+prf.getString("fullname", null));
         initViews();
         Constant.SaveLog("{\n" +
                 "    \"msg\":\"Open Main Activity\",\n" +

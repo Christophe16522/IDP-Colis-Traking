@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Constant {
-    public static final String SERVER = "http://192.168.100.19:8000";
+    public static final String SERVER = "http://192.168.100.22:8000";
 
     public static String getToday(String patern) {
         //yyyy-MM-dd
