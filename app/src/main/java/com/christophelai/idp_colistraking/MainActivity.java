@@ -9,21 +9,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    Button btnScanBarecode, btnLogout,btnAppointment;
+    Button btnScanBarecode, btnLogout, btnAppointment;
     SharedPreferences prf;
     TextView welcomeTxt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prf = getSharedPreferences("user_details", MODE_PRIVATE);
-        welcomeTxt  = (TextView) findViewById(R.id.txtBienvenu);
-        welcomeTxt.setText("Bienvenu , "+prf.getString("fullname", null));
+        welcomeTxt = (TextView) findViewById(R.id.txtBienvenu);
+        welcomeTxt.setText("Bienvenu , " + prf.getString("fullname", null));
         initViews();
         Constant.SaveLog("{\n" +
                 "    \"msg\":\"Open Main Activity\",\n" +
@@ -33,8 +33,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void initViews() {
         btnScanBarecode = findViewById(R.id.btnOpenScan);
         btnLogout = findViewById(R.id.btnLogout);
-        btnLogout = findViewById(R.id.btnLogout);
+        btnAppointment = findViewById(R.id.btnRdv);
         btnScanBarecode.setOnClickListener(this);
+        btnAppointment.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,6 +70,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 alert11.show();
             }
         });
+        btnAppointment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.w("Tag On Click", "btnRdv");
+                startActivity(new Intent(MainActivity.this, MenuAppointment.class));
+                Constant.SaveLog("{\n" +
+                        "    \"btn\":\"btnRdv\",\n" +
+                        "    \"msg\":\"Open Menu RDV\"\n" +
+                        "}", prf.getString("idCarrier", null), MainActivity.this);
+            }
+        });
     }
 
 
@@ -82,14 +94,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         "    \"btn\":\"btnOpenScan\",\n" +
                         "    \"msg\":\"Open ScannedBarcodeActivity\"\n" +
                         "}", prf.getString("idCarrier", null), MainActivity.this);
-/*
-            case R.id.btnSettings:
-                Log.w("Tag On Click", "btn Setting");
-                startActivity(new Intent(MainActivity.this, Settings.class));
-                Constant.SaveLog("{\n" +
-                        "    \"btn\":\"btnSettings\",\n" +
-                        "    \"msg\":\"Open Setting\"\n" +
-                        "}", prf.getString("idCarrier", null), MainActivity.this);*/
+
+
         }
     }
 

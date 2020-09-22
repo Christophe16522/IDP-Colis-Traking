@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -24,7 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MenuAppointment"></activity>
+        <activity android:name=".AppointmentByMail"></activity>
+        <activity android:name=".AppointmentBySMS" />
+        <activity android:name=".MenuAppointment" />
         <activity android:name=".RequestAppointment" />
         <activity android:name=".Settings" />
         <activity android:name=".Login" />

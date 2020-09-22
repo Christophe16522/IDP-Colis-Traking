@@ -28,7 +28,7 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/btnOpenScan2"
+        android:id="@+id/btnRdv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -64,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnOpenScan2"
+        app:layout_constraintTop_toBottomOf="@+id/btnRdv"
         tools:ignore="MissingConstraints" />
 
     <Button
