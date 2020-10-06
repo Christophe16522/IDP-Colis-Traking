@@ -89,7 +89,7 @@
         android:background="#FFFFFF"
         android:drawableLeft="@android:drawable/ic_menu_myplaces"
         android:padding="16dp"
-        android:text="Track Product"
+        android:text="MAJ"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
