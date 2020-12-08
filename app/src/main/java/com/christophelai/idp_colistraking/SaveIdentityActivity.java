@@ -47,7 +47,7 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
-public class SaveIdentityActivity extends Activity implements AdapterView.OnItemSelectedListener{
+public class SaveIdentityActivity extends Activity implements AdapterView.OnItemSelectedListener {
     private final static int ALL_PERMISSIONS_RESULT = 107;
     private final static int IMAGE_RESULT = 200;
     private final int IMG_REQUEST = 1;
@@ -58,6 +58,7 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     String imageNameTextValue;
     Spinner spin;
     ArrayAdapter<String> adapter;
+    String[] spinnerStatusList = {"Carte d'identité", "Colis endommagé", "Produit endommagé", "Colis et produit endommagés", "Inconnu a l'adresse"};
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
@@ -66,10 +67,11 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     private EditText name;
     private ImageView imgView;
     private Bitmap bitmap;
+    private Bitmap uploadOK;
     private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
     private String nCommande;
     private String nomImage;
-   String[] spinnerStatusList = {"Carte d'identité","Colis endommagé","Produit endommagé","Colis et produit endommagés","Inconnu a l'adresse"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +86,8 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
         spin.setOnItemSelectedListener(this);
 
 
-        Button fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        Button UploadBn = findViewById(R.id.fab);
+        UploadBn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivityForResult(getPickImageChooserIntent(), IMAGE_RESULT);
@@ -96,8 +98,26 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
         fab1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                uploadImage();
-                Toast.makeText(getApplicationContext(), "Upload clicked", Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(SaveIdentityActivity.this);
+                builder1.setMessage("Toutes les informations sont correctes ? \n \n Fichier : " + nomImage);
+                builder1.setCancelable(true);
+                builder1.setPositiveButton(
+                        "oui",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                uploadImage();
+                            }
+                        });
+                builder1.setNegativeButton(
+                        "non",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+                //Toast.makeText(getApplicationContext(), "Upload clicked", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -134,36 +154,45 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     }
 
     private void uploadImage() {
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, UploadUrl, new com.android.volley.Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.i("Response", " args : " + response);
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    String Response = jsonObject.getString("response");
-                    Toast.makeText(SaveIdentityActivity.this, Response, Toast.LENGTH_LONG).show();
-                } catch (JSONException e) {
-                    Log.e("Response", " args : " + e.getMessage());
-                    e.printStackTrace();
+        Log.e("uploadImage ", " bitmap : " + bitmap);
+        if (bitmap == null) {
+            Log.e("uploadImage ", " condition : " + bitmap);
+            Toast.makeText(SaveIdentityActivity.this, "Merci de sélectionner une image", Toast.LENGTH_LONG).show();
+        } else if (bitmap != null) {
+            Log.e("uploadImage ", " condition : " + bitmap);
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, UploadUrl, new com.android.volley.Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    Log.i("Response", " args : " + response);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        String Response = jsonObject.getString("response");
+                        Toast.makeText(SaveIdentityActivity.this, Response, Toast.LENGTH_LONG).show();
+                        ImageView imageView = findViewById(R.id.imageView);
+                        imageView.setImageResource(R.drawable.upload);
+                    } catch (JSONException e) {
+                        Log.e("Response", " args : " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.e("Response", " args : " + error.getMessage());
+                }
+            }) {
+                @Override
+                protected Map<String, String> getParams() {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("id", nCommande);
+                    params.put("name", nomImage);
+                    params.put("image", imageToString(bitmap));
+                    return params;
+                }
+            };
+            MySingleton.getInstance(SaveIdentityActivity.this).addToRequestQue(stringRequest);
+        }
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Response", " args : " + error.getMessage());
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put("id", nCommande);
-                params.put("name", nomImage);
-                params.put("image", imageToString(bitmap));
-                return params;
-            }
-        };
-        MySingleton.getInstance(SaveIdentityActivity.this).addToRequestQue(stringRequest);
     }
 
     private String imageToString(Bitmap bitmap) {
@@ -368,7 +397,7 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        imageNameTextValue="Carte d'identité";
+        imageNameTextValue = "Carte d'identité";
         nomImage = imageNameTextValue + "_" + nCommande + "_" + Constant.getToday("yyyy_MM_dd_HH_mm_ss");
     }
 }

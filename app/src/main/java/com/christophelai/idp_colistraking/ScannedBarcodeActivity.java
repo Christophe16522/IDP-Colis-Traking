@@ -440,6 +440,8 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                             vibrator.vibrate(1);
                             txtBarcodeValue.setText(barcodes.valueAt(0).displayValue);
                             txtBarcodeValue.setVisibility(View.VISIBLE);
+                            //change btn text
+                            btnScan.setText("SUIVANT");
                         }
                     });
 
