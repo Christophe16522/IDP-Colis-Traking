@@ -25,57 +25,57 @@
     <Button
         android:id="@+id/btnSign"
         android:layout_width="157dp"
-        android:layout_height="58dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:layout_marginBottom="16dp"
         android:background="#FFFFFF"
         android:drawableLeft="@android:drawable/ic_menu_edit"
         android:padding="16dp"
         android:text="Signer"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fab1"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/fab"
         android:layout_width="157dp"
-        android:layout_height="58dp"
+        android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:background="#FFFFFF"
         android:drawableLeft="@android:drawable/ic_menu_gallery"
         android:padding="16dp"
         android:text="Select"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/fab1"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/fab1"
         android:layout_width="0dp"
-        android:layout_height="58dp"
+        android:layout_height="50dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:layout_marginBottom="32dp"
         android:background="#FFFFFF"
         android:drawableRight="@android:drawable/ic_menu_send"
         android:padding="16dp"
         android:text="Envoyer"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/fab"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,15 +85,15 @@
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toTopOf="@+id/fab1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
