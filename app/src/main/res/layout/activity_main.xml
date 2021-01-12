@@ -10,7 +10,7 @@
     <Button
         android:id="@+id/btnOpenScan"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="32dp"
@@ -72,7 +72,7 @@
     <Button
         android:id="@+id/btnLogout"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
@@ -91,7 +91,7 @@
 
     <ImageView
         android:id="@+id/imageView3"
-        android:layout_width="369dp"
+        android:layout_width="0dp"
         android:layout_height="73dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"

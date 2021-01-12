@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/logologin"
-        android:layout_width="369dp"
-        android:layout_height="73dp"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="50dp"
@@ -25,7 +25,7 @@
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginEnd="32dp"

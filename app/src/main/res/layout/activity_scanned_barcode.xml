@@ -10,8 +10,8 @@
 
     <SurfaceView
         android:id="@+id/surfaceView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
@@ -62,7 +62,7 @@
     <Button
         android:id="@+id/btnScan"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
@@ -81,18 +81,15 @@
     <Button
         android:id="@+id/btnAction"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
         android:background="#FFFFFF"
         android:drawableLeft="@android:drawable/ic_menu_myplaces"
         android:padding="16dp"
         android:text="MAJ"
         android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnScan"
         tools:ignore="MissingConstraints" />
@@ -100,9 +97,7 @@
     <Button
         android:id="@+id/btnSaveID"
         android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
@@ -110,11 +105,10 @@
         android:drawableRight="@android:drawable/ic_menu_send"
         android:padding="16dp"
         android:text="Finish"
-        android:textSize="18sp"
         android:visibility="gone"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnAction" />
+        app:layout_constraintTop_toBottomOf="@+id/btnScan" />
 
     <ImageView
         android:id="@+id/imageView4"
