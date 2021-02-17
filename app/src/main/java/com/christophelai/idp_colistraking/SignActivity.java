@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +31,8 @@ import java.util.Map;
 
 public class SignActivity extends AppCompatActivity {
     PaintView paintView;
-    String nCommande, today;
+    String nCommande, today, stringImage;
+    private byte[] byteArray;
     private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
 
     @Override
@@ -37,6 +41,7 @@ public class SignActivity extends AppCompatActivity {
         Intent saveIdentityIntent = getIntent();
         today = Constant.getToday("yyyy_MM_dd_HH_mm_ss");
         nCommande = saveIdentityIntent.getStringExtra("nCommande");
+       ////////////// uploadImageStatus = "bad";
         paintView = new PaintView(this);
         setContentView(paintView);
     }
@@ -103,8 +108,9 @@ public class SignActivity extends AppCompatActivity {
         paintView.setDrawingCacheEnabled(true);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         paintView.getDrawingCache().compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-        byte[] byteArray = byteArrayOutputStream.toByteArray();
-        return Base64.encodeToString(byteArray, Base64.DEFAULT);
+        byteArray = byteArrayOutputStream.toByteArray();
+        stringImage = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        return stringImage;
     }
 
     private void uploadImage() {
@@ -137,5 +143,8 @@ public class SignActivity extends AppCompatActivity {
             }
         };
         MySingleton.getInstance(SignActivity.this).addToRequestQue(stringRequest);
+
     }
+
+
 }

@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -67,7 +68,6 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     private EditText name;
     private ImageView imgView;
     private Bitmap bitmap;
-    private Bitmap uploadOK;
     private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
     private String nCommande;
     private String nomImage;
@@ -106,6 +106,8 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 uploadImage();
+                                //Call saving id image function
+                                saveIdentityImage();
                             }
                         });
                 builder1.setNegativeButton(
@@ -191,8 +193,20 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
                 }
             };
             MySingleton.getInstance(SaveIdentityActivity.this).addToRequestQue(stringRequest);
+
         }
 
+    }
+    //Save identity photo
+    private void saveIdentityImage(){
+        Log.e("Nom id image:", nomImage);
+        if (bitmap == null) {
+            Log.e("uploadImage ", " condition : " + "null");
+            Toast.makeText(SaveIdentityActivity.this, "Merci de choisir une photo", Toast.LENGTH_LONG).show();
+        } else if (bitmap != null) {
+            Log.e("uploadImage ", " condition : " + bitmap);
+            MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, nomImage, "ID Description");
+        }
     }
 
     private String imageToString(Bitmap bitmap) {
@@ -271,8 +285,8 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
                 if (filePath != null) {
                     //  bitmap = BitmapFactory.decodeFile(filePath);
                     bitmap = BitmapFactory.decodeFile(filePath);
-                    imageView.setImageBitmap(bitmap);
-                }
+                }                    imageView.setImageBitmap(bitmap);
+
             }
 
         }
