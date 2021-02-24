@@ -71,7 +71,6 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     private String UploadUrl = Constant.SERVER + "/api-delivery/upload";
     private String nCommande;
     private String nomImage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
