@@ -23,7 +23,7 @@ public class PaintView extends View {
         brush.setColor(Color.BLACK);
         brush.setStyle(Paint.Style.STROKE);
         brush.setStrokeJoin(Paint.Join.ROUND);
-        brush.setStrokeWidth(8f);
+        brush.setStrokeWidth(50f);
 
         params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         btn = new Button(context);
