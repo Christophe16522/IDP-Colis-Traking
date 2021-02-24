@@ -36,6 +36,7 @@
         <activity android:name=".ScannedBarcodeActivity" />
         <activity
             android:name=".SignActivity"
+            android:screenOrientation="landscape"
             android:label="Merci de signer ici" />
 
         <meta-data
