@@ -20,10 +20,10 @@ public class PaintView extends View {
         super(context);
 
         brush.setAntiAlias(true);
-        brush.setColor(Color.BLUE);
+        brush.setColor(Color.BLACK);
         brush.setStyle(Paint.Style.STROKE);
         brush.setStrokeJoin(Paint.Join.ROUND);
-        brush.setStrokeWidth(50f);
+        brush.setStrokeWidth(15f);
 
         params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         btn = new Button(context);
