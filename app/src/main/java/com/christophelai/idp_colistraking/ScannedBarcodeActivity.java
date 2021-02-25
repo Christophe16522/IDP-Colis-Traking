@@ -378,7 +378,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 .build();
 
         cameraSource = new CameraSource.Builder(this, barcodeDetector)
-                .setRequestedPreviewSize(1920, 1080)
+                .setRequestedPreviewSize(1080, 1080)
                 .setAutoFocusEnabled(true) //you should add this feature
                 .build();
 
