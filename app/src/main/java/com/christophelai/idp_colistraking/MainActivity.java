@@ -23,7 +23,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_main);
         prf = getSharedPreferences("user_details", MODE_PRIVATE);
         welcomeTxt = (TextView) findViewById(R.id.txtBienvenu);
-        welcomeTxt.setText("Bienvenu , " + prf.getString("fullname", null));
+        welcomeTxt.setText("Bienvenue , " + prf.getString("fullname", null));
         initViews();
         Constant.SaveLog("{\n" +
                 "    \"msg\":\"Open Main Activity\",\n" +
