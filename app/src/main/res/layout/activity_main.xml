@@ -28,45 +28,23 @@
         tools:ignore="MissingConstraints" />
 
     <Button
-        android:id="@+id/btnRdv"
+        android:id="@+id/btnOpenSaisi"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:background="#FFFFFF"
-        android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+        android:drawableLeft="@android:drawable/ic_menu_add"
         android:padding="16dp"
-        android:text="Rendez vous"
-        android:textSize="24sp"
-        android:visibility="gone"
+        android:text="Saisir données"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnOpenScan"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/btnSettings"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
-        android:background="#FFFFFF"
-        android:drawableLeft="@android:drawable/ic_menu_preferences"
-        android:padding="16dp"
-        android:text="Parametres"
-        android:textSize="24sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRdv"
         tools:ignore="MissingConstraints" />
 
     <Button
@@ -86,7 +64,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSettings"
+        app:layout_constraintTop_toBottomOf="@+id/btnOpenSaisi"
         tools:ignore="MissingConstraints" />
 
     <ImageView

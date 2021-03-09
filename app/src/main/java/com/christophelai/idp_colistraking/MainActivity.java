@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    Button btnScanBarecode, btnLogout, btnAppointment;
+    Button btnScanBarecode, btnLogout, btnSaisiData;
     SharedPreferences prf;
     TextView welcomeTxt;
 
@@ -33,9 +33,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private void initViews() {
         btnScanBarecode = findViewById(R.id.btnOpenScan);
         btnLogout = findViewById(R.id.btnLogout);
-        btnAppointment = findViewById(R.id.btnRdv);
+        btnSaisiData = findViewById(R.id.btnOpenSaisi);
         btnScanBarecode.setOnClickListener(this);
-        btnAppointment.setOnClickListener(this);
+        btnSaisiData.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,15 +70,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 alert11.show();
             }
         });
-        btnAppointment.setOnClickListener(new View.OnClickListener() {
+        btnSaisiData.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Log.w("Tag On Click", "btnRdv");
-                startActivity(new Intent(MainActivity.this, MenuAppointment.class));
-                Constant.SaveLog("{\n" +
-                        "    \"btn\":\"btnRdv\",\n" +
-                        "    \"msg\":\"Open Menu RDV\"\n" +
-                        "}", prf.getString("idCarrier", null), MainActivity.this);
+            public void onClick(View view) {
+                Log.e("Tag On Click", "saisi des data");
+                startActivity(new Intent(MainActivity.this, SaisieData.class));
             }
         });
     }
@@ -94,8 +90,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         "    \"btn\":\"btnOpenScan\",\n" +
                         "    \"msg\":\"Open ScannedBarcodeActivity\"\n" +
                         "}", prf.getString("idCarrier", null), MainActivity.this);
-
-
         }
     }
 
