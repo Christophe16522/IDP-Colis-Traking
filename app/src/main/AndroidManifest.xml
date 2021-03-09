@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,7 +26,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AppointmentByMail"></activity>
+        <activity android:name=".SaisieData"/>
+        <activity android:name=".AppointmentByMail" />
         <activity android:name=".AppointmentBySMS" />
         <activity android:name=".MenuAppointment" />
         <activity android:name=".RequestAppointment" />
@@ -36,8 +38,8 @@
         <activity android:name=".ScannedBarcodeActivity" />
         <activity
             android:name=".SignActivity"
-            android:screenOrientation="landscape"
-            android:label="Merci de signer ici" />
+            android:label="Merci de signer ici"
+            android:screenOrientation="landscape" />
 
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
