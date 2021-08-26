@@ -148,7 +148,7 @@ public class SignActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("id", nCommande);
-                params.put("name", "singature-" + nCommande + "-" + today);
+                params.put("name", "signature-" + nCommande + "-" + today);
                 try {
                     params.put("image", captureScreen());
                 } catch (Exception e) {
