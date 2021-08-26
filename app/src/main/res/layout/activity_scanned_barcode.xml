@@ -105,8 +105,8 @@
         android:drawableRight="@android:drawable/ic_menu_send"
         android:padding="16dp"
         android:text="Finish"
-        android:visibility="gone"
         android:textSize="18sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnScan" />
 

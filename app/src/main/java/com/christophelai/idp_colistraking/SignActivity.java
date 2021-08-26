@@ -116,7 +116,7 @@ public class SignActivity extends AppCompatActivity {
             Log.e("Bitmap image", String.valueOf(bitmapImage));
             if (bitmapImage != null) {
                 Log.e("uploadSignatureImage ", " condition : " + bitmapImage);
-                MediaStore.Images.Media.insertImage(getContentResolver(),bitmapImage,"singature-" + nCommande + "-" + today,"Signature Description");
+                MediaStore.Images.Media.insertImage(getContentResolver(),bitmapImage,"signature-" + nCommande + "-" + today,"Signature Description");
             }
         }catch (Exception e){
             throw new Exception("Erreur dans la sauvegarde de la signature");

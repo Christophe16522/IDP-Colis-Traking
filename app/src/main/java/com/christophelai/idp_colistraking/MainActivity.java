@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    Button btnScanBarecode, btnLogout, btnSaisiData;
+    Button btnScanBarecode, btnLogout, btnSaisiData, btnListLivraison;
     SharedPreferences prf;
     TextView welcomeTxt;
 
@@ -34,8 +34,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btnScanBarecode = findViewById(R.id.btnOpenScan);
         btnLogout = findViewById(R.id.btnLogout);
         btnSaisiData = findViewById(R.id.btnOpenSaisi);
+        btnListLivraison = findViewById(R.id.btn_list_livraison);
         btnScanBarecode.setOnClickListener(this);
         btnSaisiData.setOnClickListener(this);
+        btnListLivraison.setOnClickListener(this);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,6 +77,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onClick(View view) {
                 Log.e("Tag On Click", "saisi des data");
                 startActivity(new Intent(MainActivity.this, SaisieData.class));
+            }
+        });
+        btnListLivraison.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e("Tag On Click", "saisi des data");
+                startActivity(new Intent(MainActivity.this, ListDelivery.class));
             }
         });
     }
