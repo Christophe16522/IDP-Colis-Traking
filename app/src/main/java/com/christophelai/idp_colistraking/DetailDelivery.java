@@ -46,10 +46,10 @@ import java.util.ArrayList;
 public class DetailDelivery extends Activity implements AdapterView.OnItemSelectedListener {
     Button btnCall, btnDetailDeliveryWaze, btnFinishDetailDelivery, btnDetailDeliveryMaj;
     ArrayList<String> trackingStatus = new ArrayList<>();
-    ArrayAdapter<String> adapter;
-    String statusById = "";
+    ArrayAdapter<String> adapter = null;
+    String statusById = "1";
     int spinnerPosition;
-
+    String comeFrom = "listDelivery";
     Spinner spin;
     String baseUrl = Constant.SERVER + "/";
     String urlListTrackingStatus = baseUrl + "api-delivery/getstatus";
@@ -63,11 +63,13 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_delivery);
         spin = findViewById(R.id.spinnerDetailDeliveryStatus);
+        spin.setVisibility(View.GONE);
         btnFinishDetailDelivery = findViewById(R.id.btnFinishDetailDelivery);
         btnDetailDeliveryMaj = findViewById(R.id.btnDetailDeliveryMaj);
         loadSpinnerData(urlListTrackingStatus);
         Intent i = getIntent();
         idTracking = i.getIntExtra("id", 0);
+        comeFrom = i.getStringExtra("comeFrom");
         getStatusById(Integer.toString(idTracking));
         String nomComplet = i.getStringExtra("nomComplet");
         String adresse = i.getStringExtra("adresse");
@@ -96,7 +98,7 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
         detailDeliveryNcommande.setText(nComande);*/
         String url_str = null;
         try {
-            URL url = new URL(urlGetAdress + adresseComplet);
+            URL url = new URL(urlGetAdress + idTracking);
             url_str = url.toString();
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -108,6 +110,7 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
         btnCall.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.e("telephne a appeler", telephone);
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
                 callIntent.setData(Uri.parse("tel:" + telephone));
                 startActivity(callIntent);
@@ -155,7 +158,7 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
                             public void onClick(DialogInterface dialog, int id) {
                                 trackProduct(newStatusId, idTracking);
                                 Intent intent = new Intent(DetailDelivery.this, SaveIdentityActivity.class);
-                                intent.putExtra("nCommande", ""+idTracking);
+                                intent.putExtra("nCommande", "" + idTracking);
                                 startActivity(intent);
                                 finish();
                             }
@@ -212,6 +215,20 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
     }
 
     @Override
+    public void onBackPressed() {
+        if(comeFrom.equals("listDelivery")){
+            Intent i = new Intent(DetailDelivery.this, ListDelivery.class);
+            i.putExtra("dateChoosed", Constant.getToday("yyyy-MM-dd"));
+            startActivity(i);
+            finish();
+        }else if(comeFrom.equals("saisieData")){
+            Intent i = new Intent(DetailDelivery.this, SaisieData.class);
+            startActivity(i);
+            finish();
+        }
+    }
+
+    @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
@@ -226,10 +243,14 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
                 public void onResponse(JSONObject response) {
                     try {
                         statusById = response.getString("trackingDesc");
-                        Log.i("getStatusById", "response : " + statusById);
-                        spinnerPosition = adapter.getPosition(statusById);
+                        if (adapter != null) {
+                            synchronized (adapter) {
+                                spinnerPosition = adapter.getPosition(statusById);
+                                spin.setSelection(spinnerPosition);
+                            }
+                        }
+                        spin.setVisibility(View.VISIBLE);
                         Log.i("getStatusById", "spinnerPosition : " + spinnerPosition);
-                        spin.setSelection(spinnerPosition);
                         //Toast.makeText(getApplicationContext(), response.getString("trackingDesc"), Toast.LENGTH_LONG).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -258,6 +279,7 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
             });
             requestQueue.add(jsonObjectRequest);
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -399,7 +421,7 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
                 @Override
                 public void onResponse(JSONObject response) {
                     //txtBarcodeValue.setText("Resposne : " + response.toString());
-                    Toast.makeText(getApplicationContext(), "Tracking updated", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Mise a jour terminé", Toast.LENGTH_LONG).show();
                 }
             }, new Response.ErrorListener() {
 
@@ -427,8 +449,6 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
             Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-
-
 
 
 }

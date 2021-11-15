@@ -1,6 +1,7 @@
 package com.christophelai.idp_colistraking;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.christophelai.idp_colistraking.model.Delivery;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,7 @@ public class SaisieData extends Activity implements View.OnClickListener {
     String baseUrl = Constant.SERVER + "/";
     EditText idComande;
     TextView txtDelivery;
+    Delivery delivery = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +45,9 @@ public class SaisieData extends Activity implements View.OnClickListener {
         btnCheckData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("Tag On Click", "confirmer saisi des data");
                 getDeliveryById(idComande.getText().toString());
-                //startActivity(new Intent(MainActivity.this, SaisieData.class));
+                //open details delivery
+
             }
         });
     }
@@ -60,6 +63,29 @@ public class SaisieData extends Activity implements View.OnClickListener {
                 public void onResponse(JSONObject response) {
                     try {
                         txtDelivery.setText(response.getString("response"));
+                        delivery = new Delivery();
+                        Log.e("adress", response.getString("adresse"));
+                        delivery.setId(Integer.parseInt(response.getString("id")));
+                        delivery.setAdresse(response.getString("adresse"));
+                        delivery.setNomComplet(response.getString("nomComplet"));
+                        delivery.setTelephone(response.getString("telephone"));
+                        delivery.setnComande(response.getString("nComande"));
+                        delivery.setVille(response.getString("ville"));
+                        delivery.setnSuivi(response.getString("nSuivi"));
+                        if (delivery != null) {
+                            Intent i = new Intent(SaisieData.this, DetailDelivery.class);
+                            i.putExtra("id", delivery.getId());
+                            i.putExtra("nomComplet", delivery.getNomComplet());
+                            i.putExtra("adresse", delivery.getAdresse());
+                            i.putExtra("telephone", delivery.getTelephone());
+                            i.putExtra("nComande", delivery.getnComande());
+                            i.putExtra("ville", delivery.getVille());
+                            i.putExtra("nSuivi", delivery.getnSuivi());
+                            i.putExtra("comeFrom", "saisieData");
+                            startActivity(i);
+                            finish();
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -89,7 +115,6 @@ public class SaisieData extends Activity implements View.OnClickListener {
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
-
     }
 
     @Override

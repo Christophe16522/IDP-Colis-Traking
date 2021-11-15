@@ -297,7 +297,7 @@ public class ScannedBarcodeActivity extends Activity implements AdapterView.OnIt
                 @Override
                 public void onResponse(JSONObject response) {
                     //txtBarcodeValue.setText("Resposne : " + response.toString());
-                    Toast.makeText(getApplicationContext(), "Tracking updated", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Mise a jour terminé", Toast.LENGTH_LONG).show();
                 }
             }, new Response.ErrorListener() {
 

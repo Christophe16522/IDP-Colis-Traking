@@ -27,7 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DetailDelivery"></activity>
+        <activity android:name=".ChooseDateDeliveryActivity"/>
+        <activity android:name=".DetailDelivery" />
         <activity android:name=".ListDelivery" />
         <activity android:name=".SaisieData" />
         <activity android:name=".AppointmentByMail" />

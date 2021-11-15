@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -28,17 +30,35 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListDelivery extends Activity {
+public class ListDelivery extends Activity implements View.OnClickListener {
 
     String baseUrl = Constant.SERVER + "/";
+    String dateChoosed = "";
     String urlListDailyDelivery = baseUrl + "api-list-daily-delivery";
     List<Delivery> deliveryList;
+    Button btnOpenCalendar;
     private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_delivery);
+
+        Intent listDeliveryIntent = getIntent();
+        dateChoosed = listDeliveryIntent.getStringExtra("dateChoosed");
+        urlListDailyDelivery += "/" + dateChoosed;
+        btnOpenCalendar = findViewById(R.id.btnOpenCalendar);
+        btnOpenCalendar.setOnClickListener(this);
+        btnOpenCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ListDelivery.this, ChooseDateDeliveryActivity.class));
+                finish();
+            }
+        });
+
+        TextView selected_date_textView = (TextView) findViewById(R.id.selected_date);
+        selected_date_textView.setText("Date sélectionnée : " + dateChoosed);
 
         listView = (ListView) findViewById(R.id.list_view_delivery);
         deliveryList = new ArrayList<>();
@@ -51,14 +71,16 @@ public class ListDelivery extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Delivery selectedItem = (Delivery) parent.getItemAtPosition(position);
                 Intent i = new Intent(ListDelivery.this, DetailDelivery.class);
-                i.putExtra("id",  selectedItem.getId());
+                i.putExtra("id", selectedItem.getId());
                 i.putExtra("nomComplet", selectedItem.getNomComplet());
                 i.putExtra("adresse", selectedItem.getAdresse());
                 i.putExtra("telephone", selectedItem.getTelephone());
                 i.putExtra("nComande", selectedItem.getnComande());
                 i.putExtra("ville", selectedItem.getVille());
                 i.putExtra("nSuivi", selectedItem.getnSuivi());
+                i.putExtra("comeFrom", "listDelivery");
                 startActivity(i);
+                finish();
             }
         });
     }
@@ -150,5 +172,17 @@ public class ListDelivery extends Activity {
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         stringRequest.setRetryPolicy(policy);
         requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent i = new Intent(ListDelivery.this, MainActivity.class);
+        startActivity(i);
+        finish();
     }
 }

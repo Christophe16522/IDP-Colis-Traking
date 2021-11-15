@@ -83,7 +83,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View view) {
                 Log.e("Tag On Click", "saisi des data");
-                startActivity(new Intent(MainActivity.this, ListDelivery.class));
+                Intent i = new Intent(MainActivity.this, ListDelivery.class);
+                i.putExtra("dateChoosed", Constant.getToday("yyyy-MM-dd"));
+                startActivity(i);
+                finish();
             }
         });
     }

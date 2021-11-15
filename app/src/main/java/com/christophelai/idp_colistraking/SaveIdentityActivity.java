@@ -52,13 +52,12 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
     private final static int IMAGE_RESULT = 200;
     private final int IMG_REQUEST = 1;
     Uri picUri;
-
     CheckBox cbIsIDCard;
     EditText imageNameText;
     String imageNameTextValue;
     Spinner spin;
     ArrayAdapter<String> adapter;
-    String[] spinnerStatusList = {"Carte d'identité", "Colis endommagé", "Produit endommagé", "Colis et produit endommagés", "Inconnu a l'adresse"};
+    String[] spinnerStatusList = {"Carte d'identité", "Colis endommagé", "Produit endommagé", "Colis et produit endommagés", "Inconnu a l'adresse", "Signature"};
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
@@ -145,7 +144,7 @@ public class SaveIdentityActivity extends Activity implements AdapterView.OnItem
 
     @Override
     public void onBackPressed() {
-        Intent i = new Intent(SaveIdentityActivity.this, ScannedBarcodeActivity.class);
+        Intent i = new Intent(SaveIdentityActivity.this, MainActivity.class);
         startActivity(i);
         finish();
     }

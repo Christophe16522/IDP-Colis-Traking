@@ -22,6 +22,38 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <Button
+        android:id="@+id/btnOpenCalendar"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+        android:padding="16dp"
+        android:text="Choisir Date"
+        android:textSize="18sp"
+          app:layout_constraintTop_toBottomOf="@+id/logologin"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/selected_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginRight="32dp"
+        android:textColor="#000000"
+        android:text="Date sélectionnée"
+        android:textSize="18dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnOpenCalendar" />
 
     <ListView
         android:id="@+id/list_view_delivery"
@@ -30,9 +62,7 @@
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logologin"></ListView>
-
-
+        app:layout_constraintTop_toBottomOf="@+id/selected_date"></ListView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
