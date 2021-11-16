@@ -135,7 +135,7 @@
         android:layout_marginRight="32dp"
         android:background="#FFFFFF"
         android:drawableRight="@android:drawable/ic_menu_send"
-        android:text="Finish"
+        android:text="SUIVANT"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinnerDetailDeliveryStatus" />
 

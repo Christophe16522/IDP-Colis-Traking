@@ -27,7 +27,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ListDelivery extends Activity implements View.OnClickListener {
@@ -57,8 +60,15 @@ public class ListDelivery extends Activity implements View.OnClickListener {
             }
         });
 
-        TextView selected_date_textView = (TextView) findViewById(R.id.selected_date);
-        selected_date_textView.setText("Date sélectionnée : " + dateChoosed);
+        try {
+            Date date1=new SimpleDateFormat("yyyy-MM-dd").parse(dateChoosed);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String strDate = formatter.format(date1);
+            TextView selected_date_textView = (TextView) findViewById(R.id.selected_date);
+            selected_date_textView.setText("Date sélectionnée : " + strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         listView = (ListView) findViewById(R.id.list_view_delivery);
         deliveryList = new ArrayList<>();
