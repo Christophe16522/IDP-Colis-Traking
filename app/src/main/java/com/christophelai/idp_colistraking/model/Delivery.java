@@ -8,11 +8,12 @@ public class Delivery {
     private String nComande;
     private String ville;
     private String nSuivi;
+    private String status;
 
     public Delivery() {
     }
 
-    public Delivery(int id,String nomComplet, String adresse, String telephone, String nComande, String ville, String nSuivi) {
+    public Delivery(int id, String nomComplet, String adresse, String telephone, String nComande, String ville, String nSuivi, String status) {
         this.id = id;
         this.nomComplet = nomComplet;
         this.adresse = adresse;
@@ -20,6 +21,7 @@ public class Delivery {
         this.nComande = nComande;
         this.ville = ville;
         this.nSuivi = nSuivi;
+        this.status = status;
     }
 
     public int getId() {
@@ -68,6 +70,14 @@ public class Delivery {
 
     public void setVille(String ville) {
         this.ville = ville;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public String getnSuivi() {

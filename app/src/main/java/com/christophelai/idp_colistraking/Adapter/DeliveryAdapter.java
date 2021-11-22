@@ -44,8 +44,8 @@ public class DeliveryAdapter extends ArrayAdapter<Delivery> {
         TextView textViewNcommande = listViewItem.findViewById(R.id.textViewNcommande);
         TextView textViewNsuivi = listViewItem.findViewById(R.id.textViewNSuivi);
         Delivery delivery = deliveryItems.get(position);
-        textViewNcommande.setText(delivery.getnComande());
-        textViewNsuivi.setText(delivery.getnSuivi());
+        textViewNcommande.setText(delivery.getnComande()+" / "+delivery.getnSuivi());
+        textViewNsuivi.setText(delivery.getStatus());
         return listViewItem;
     }
 }

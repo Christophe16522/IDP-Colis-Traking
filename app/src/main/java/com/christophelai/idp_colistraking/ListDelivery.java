@@ -123,7 +123,8 @@ public class ListDelivery extends Activity implements View.OnClickListener {
                                         deliveryObject.getString("telephone"),
                                         deliveryObject.getString("nComande"),
                                         deliveryObject.getString("ville"),
-                                        deliveryObject.getString("nSuivi"));
+                                        deliveryObject.getString("nSuivi"),
+                                        deliveryObject.getString("trackingDesc"));
                                 //adding the hero to deliverylist
                                 deliveryList.add(delivery);
                             }
