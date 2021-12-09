@@ -88,6 +88,7 @@ public class ListDelivery extends Activity implements View.OnClickListener {
                 i.putExtra("nComande", selectedItem.getnComande());
                 i.putExtra("ville", selectedItem.getVille());
                 i.putExtra("nSuivi", selectedItem.getnSuivi());
+                i.putExtra("trackingDesc", selectedItem.getStatus());
                 i.putExtra("comeFrom", "listDelivery");
                 startActivity(i);
                 finish();

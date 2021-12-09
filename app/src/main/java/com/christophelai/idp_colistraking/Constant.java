@@ -72,6 +72,7 @@ public class Constant {
                         message = "Connection TimeOut! Please check your internet connection.";
                     }
                     Toast.makeText(context, "Error : " + message, Toast.LENGTH_LONG).show();
+                 
                 }
             });
             requestQueue.add(jsonObjectRequest);

@@ -46,7 +46,7 @@ import java.util.ArrayList;
 public class DetailDelivery extends Activity implements AdapterView.OnItemSelectedListener {
     Button btnCall, btnDetailDeliveryWaze, btnFinishDetailDelivery, btnDetailDeliveryMaj;
     ArrayList<String> trackingStatus = new ArrayList<>();
-    ArrayAdapter<String> adapter = null;
+    ArrayAdapter<String> adapter;
     String statusById = "1";
     int spinnerPosition;
     String comeFrom = "listDelivery";
@@ -57,28 +57,29 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
     String longitude, latitude, adresseComplet;
     String newStatusId = "0";
     int idTracking = 0;
+    String trackingDesc = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_delivery);
         spin = findViewById(R.id.spinnerDetailDeliveryStatus);
-        spin.setVisibility(View.GONE);
         btnFinishDetailDelivery = findViewById(R.id.btnFinishDetailDelivery);
         btnDetailDeliveryMaj = findViewById(R.id.btnDetailDeliveryMaj);
-        loadSpinnerData(urlListTrackingStatus);
+
         Intent i = getIntent();
         idTracking = i.getIntExtra("id", 0);
         comeFrom = i.getStringExtra("comeFrom");
-        getStatusById(Integer.toString(idTracking));
+        //  getStatusById(Integer.toString(idTracking));
         String nomComplet = i.getStringExtra("nomComplet");
         String adresse = i.getStringExtra("adresse");
         final String telephone = i.getStringExtra("telephone");
         final String nComande = i.getStringExtra("nComande");
         String ville = i.getStringExtra("ville");
         String nSuivi = i.getStringExtra("nSuivi");
+        trackingDesc = i.getStringExtra("trackingDesc");
         adresseComplet = adresse + " " + ville;
-
+        loadSpinnerData(urlListTrackingStatus);
         TextView detailDeliveryNcommande = (TextView) findViewById(R.id.detailDeliveryNcommande);
         detailDeliveryNcommande.setText(nComande);
 
@@ -90,6 +91,8 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
 
         TextView detailDeliveryAdresse = (TextView) findViewById(R.id.detailDeliveryAdresse);
         detailDeliveryAdresse.setText(adresseComplet);
+
+
 
        /* TextView detailDeliveryNcommande = (TextView) findViewById(R.id.detailDeliveryNcommande);
         detailDeliveryNcommande.setText(nComande);
@@ -216,12 +219,12 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
 
     @Override
     public void onBackPressed() {
-        if(comeFrom.equals("listDelivery")){
+        if (comeFrom.equals("listDelivery")) {
             Intent i = new Intent(DetailDelivery.this, ListDelivery.class);
             i.putExtra("dateChoosed", Constant.getToday("yyyy-MM-dd"));
             startActivity(i);
             finish();
-        }else if(comeFrom.equals("saisieData")){
+        } else if (comeFrom.equals("saisieData")) {
             Intent i = new Intent(DetailDelivery.this, SaisieData.class);
             startActivity(i);
             finish();
@@ -353,6 +356,9 @@ public class DetailDelivery extends Activity implements AdapterView.OnItemSelect
                     adapter = new ArrayAdapter<String>(DetailDelivery.this, android.R.layout.simple_spinner_item, trackingStatus);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spin.setAdapter(adapter);
+
+                    spinnerPosition = adapter.getPosition(trackingDesc);
+                    spin.setSelection(spinnerPosition);
                 } catch (JSONException e) {
                     Log.e("loadSpinnerData Error", " args : " + e.getMessage());
                     e.printStackTrace();
