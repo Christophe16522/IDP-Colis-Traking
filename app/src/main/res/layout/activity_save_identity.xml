@@ -54,7 +54,7 @@
         android:background="#FFFFFF"
         android:drawableLeft="@android:drawable/ic_menu_gallery"
         android:padding="16dp"
-        android:text="Select"
+        android:text="SELECTIONNER"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

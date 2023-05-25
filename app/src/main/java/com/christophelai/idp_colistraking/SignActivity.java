@@ -116,7 +116,7 @@ public class SignActivity extends AppCompatActivity {
             Log.e("Bitmap image", String.valueOf(bitmapImage));
             if (bitmapImage != null) {
                 Log.e("uploadSignatureImage ", " condition : " + bitmapImage);
-                MediaStore.Images.Media.insertImage(getContentResolver(),bitmapImage,"singature-" + nCommande + "-" + today,"Signature Description");
+                MediaStore.Images.Media.insertImage(getContentResolver(),bitmapImage,"signature-" + nCommande + "-" + today,"Signature Description");
             }
         }catch (Exception e){
             throw new Exception("Erreur dans la sauvegarde de la signature");
@@ -148,7 +148,7 @@ public class SignActivity extends AppCompatActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
                 params.put("id", nCommande);
-                params.put("name", "singature-" + nCommande + "-" + today);
+                params.put("name", "signature-" + nCommande + "-" + today);
                 try {
                     params.put("image", captureScreen());
                 } catch (Exception e) {

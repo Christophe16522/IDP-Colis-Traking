@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:allowBackup="true"
@@ -26,7 +27,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".SaisieData"/>
+        <activity android:name=".ChooseDateDeliveryActivity"/>
+        <activity android:name=".DetailDelivery" />
+        <activity android:name=".ListDelivery" />
+        <activity android:name=".SaisieData" />
         <activity android:name=".AppointmentByMail" />
         <activity android:name=".AppointmentBySMS" />
         <activity android:name=".MenuAppointment" />
